@@ -80,10 +80,10 @@ class User private constructor(
         lastName: String?,
         email: String?,
         passwordHash: String,
-        salt: String? = null,
-        rawPhone: String? = null
+        salt: String?,
+        rawPhone: String?
     ): this(firstName, lastName, email = email, meta = mapOf("auth" to "csv")) {
-        println("third mail constructor")
+        println("third import constructor")
         this.salt = salt
         this.phone = rawPhone
         this.passwordHash = passwordHash
@@ -173,7 +173,7 @@ class User private constructor(
                 !email.isNullOrBlank() && !password.isNullOrBlank() ->
                     User(
                         firstName, lastName,
-                        email, password, salt
+                        email, password
                     )
                 else -> throw IllegalArgumentException("Email or phone must not be null or blank")
             }
