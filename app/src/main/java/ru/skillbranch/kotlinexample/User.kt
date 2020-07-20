@@ -74,6 +74,21 @@ class User private constructor(
         sendAccessCodeToUser(rawPhone, code)
     }
 
+    //for csv import
+    constructor(
+        firstName: String,
+        lastName: String?,
+        email: String?,
+        passwordHash: String,
+        salt: String? = null,
+        rawPhone: String? = null
+    ): this(firstName, lastName, email = email, meta = mapOf("auth" to "csv")) {
+        println("third mail constructor")
+        this.salt = salt
+        this.phone = rawPhone
+        this.passwordHash = passwordHash
+    }
+
     init {
         println("First init block, primary constructor called")
 
@@ -139,16 +154,26 @@ class User private constructor(
             fullName: String,
             email: String? = null,
             password: String? = null,
+            salt: String? = null,
             phone: String? = null
         ): User {
             val (firstName, lastName) = fullName.fullNameToPair()
 
             return when {
+                !salt.isNullOrBlank() && (!email.isNullOrEmpty() || !phone.isNullOrEmpty()) -> //import
+                    User(
+                        firstName,
+                        lastName,
+                        email,
+                        password!!,
+                        salt,
+                        phone
+                    )
                 !phone.isNullOrBlank() -> User(firstName, lastName, phone)
                 !email.isNullOrBlank() && !password.isNullOrBlank() ->
                     User(
                         firstName, lastName,
-                        email, password
+                        email, password, salt
                     )
                 else -> throw IllegalArgumentException("Email or phone must not be null or blank")
             }

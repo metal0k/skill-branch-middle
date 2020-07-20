@@ -22,6 +22,18 @@ object UserHolder {
                 map[rawPhone.trim()] = user
         }
 
+    fun importUser(
+        fullName: String,
+        email: String?,
+        password: String,
+        salt: String?,
+        phone: String?
+    ): User = User.makeUser(fullName, email, password, salt, phone)
+        .also { user ->
+            require(!map.contains(user.login)){"User already exists!"}
+            map[user.login] = user
+        }
+
     fun loginUser(
         login: String,
         password: String
@@ -41,6 +53,28 @@ object UserHolder {
             user.changePassword(accessCode!!, generateAccessCode())
         }
 
+    }
+
+
+
+    val INDEX_FULLNAME = 0
+    val INDEX_EMAIL = 1
+    val INDEX_PWDSALT = 2
+    val INDEX_PHONE = 3
+
+    fun importUsers(list: List<String>): List<User> {
+        var userList = mutableListOf<User>()
+        for (csvItem in list) {
+            val csvCols = csvItem.split(";")
+            val hasMail = !csvCols[INDEX_EMAIL].isNullOrBlank()
+            val hasPhone = !csvCols[INDEX_PHONE].isNullOrBlank()
+            if (!hasMail && !hasPhone)
+                continue
+            val (salt, pwd) = csvCols[INDEX_PWDSALT].split(":")
+            userList.add(importUser(csvCols[INDEX_FULLNAME], csvCols[INDEX_EMAIL], pwd, salt, csvCols[INDEX_PHONE]))
+        }
+
+        return userList;
     }
 
 }
