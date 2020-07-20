@@ -11,14 +11,14 @@ object UserHolder {
         password: String
     ): User = User.makeUser(fullName, email = email, password = password)
         .also { user ->
-            require(!map.contains(user.login)){"User already exists!"}
+            require(!map.contains(user.login)){"A user with this email already exists"}
             map[user.login] = user
         }
 
     fun registerUserByPhone(fullName: String, rawPhone: String): User = User.makeUser(fullName, phone = rawPhone)
         .also { user ->
-                require(user.validPhone) { "Phone format is invalid" }
-                require(!map.contains(rawPhone.trim())){"User already exists!"}
+                require(user.validPhone) { "Enter a valid phone number starting with a + and containing 11 digits" }
+                require(!map.contains(rawPhone.trim())){"A user with this phone already exists"}
                 map[rawPhone.trim()] = user
         }
 
