@@ -37,7 +37,7 @@ object UserHolder {
     fun loginUser(
         login: String,
         password: String
-    ): String? = map[login.trim()]?.let {
+    ): String? = map[login.trim().toLowerCase()]?.let {
         if (it.checkPassword(password)) it.userInfo
         else null
     }
