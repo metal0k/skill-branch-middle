@@ -25,7 +25,7 @@ object UserHolder {
     fun importUser(
         fullName: String,
         email: String?,
-        password: String,
+        password: String?,
         salt: String?,
         phone: String?
     ): User = User.makeUser(fullName, email, password, salt, phone)
@@ -65,13 +65,14 @@ object UserHolder {
     fun importUsers(list: List<String>): List<User> {
         var userList = mutableListOf<User>()
         for (csvItem in list) {
-            val csvCols = csvItem.split(";")
+            val csvCols = csvItem.split(";").map { if(it.isBlank()) null else it  }
+            val hasFullname = !csvCols[INDEX_FULLNAME].isNullOrBlank()
             val hasMail = !csvCols[INDEX_EMAIL].isNullOrBlank()
             val hasPhone = !csvCols[INDEX_PHONE].isNullOrBlank()
-            if (!hasMail && !hasPhone)
+            if (!hasMail && !hasPhone || !hasFullname)
                 continue
-            val (salt, pwd) = csvCols[INDEX_PWDSALT].split(":")
-            userList.add(importUser(csvCols[INDEX_FULLNAME], csvCols[INDEX_EMAIL], pwd, salt, csvCols[INDEX_PHONE]))
+            val (salt: String?, pwd: String?) = csvCols[INDEX_PWDSALT]?.split(":") ?: listOf(null, null)
+            userList.add(importUser(csvCols[INDEX_FULLNAME]!!, csvCols[INDEX_EMAIL], pwd, salt, csvCols[INDEX_PHONE]))
         }
 
         return userList;
