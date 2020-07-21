@@ -82,10 +82,9 @@ class User private constructor(
         passwordHash: String,
         salt: String?,
         rawPhone: String?
-    ): this(firstName, lastName, email = email, meta = mapOf("auth" to "csv")) {
+    ): this(firstName, lastName, email = email, rawPhone = rawPhone, meta = mapOf("auth" to "csv")) {
         println("third import constructor")
         this.salt = salt
-        this.phone = rawPhone
         this.passwordHash = passwordHash
     }
 
