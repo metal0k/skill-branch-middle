@@ -24,7 +24,7 @@ class RootActivity : AppCompatActivity() {
 
     private var m_searchQuery: String = ""
     private var searchItem: MenuItem? = null
-    private var m_isSearching: Boolean = true
+    private var m_isSearching: Boolean = false
     private lateinit var viewModel: ArticleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,9 +141,6 @@ class RootActivity : AppCompatActivity() {
             searchItem?.expandActionView()
             searchView?.setQuery(m_searchQuery, false)
             searchView?.clearFocus()
-//            viewModel.currentState.searchQuery?.also{
-//                searchView.setQuery(it, false)
-//            }
         }
         searchItem?.setOnActionExpandListener(object: MenuItem.OnActionExpandListener{
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
