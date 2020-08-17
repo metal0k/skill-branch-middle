@@ -21,7 +21,10 @@ import ru.skillbranch.skillarticles.viewmodels.Notify
 import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
+
+    private var m_searchQuery: String = ""
     private var searchItem: MenuItem? = null
+    private var m_isSearching: Boolean = false
     private lateinit var viewModel: ArticleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +38,10 @@ class RootActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
         viewModel.observeState(this) {
             renderUi(it)
+            if (it.isSearch){
+                m_isSearching = true
+                m_searchQuery = it.searchQuery ?: ""
+            }
         }
 
         viewModel.observeNotifications(this){
@@ -129,8 +136,12 @@ class RootActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_search, menu)
         searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
-        if (viewModel.currentState.isSearch)
+
+        if (m_isSearching) {
             searchItem?.expandActionView()
+            searchView?.setQuery(m_searchQuery, false)
+            searchView?.clearFocus()
+        }
         searchItem?.setOnActionExpandListener(object: MenuItem.OnActionExpandListener{
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 viewModel.handleSearchMode(true)
@@ -143,9 +154,7 @@ class RootActivity : AppCompatActivity() {
             }
         })
         searchView.queryHint = getString(R.string.search_query_hint)
-        viewModel.currentState.searchQuery?.also{
-            searchView.setQuery(it, false)
-        }
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
