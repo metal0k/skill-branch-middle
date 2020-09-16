@@ -239,7 +239,7 @@ object MarkdownParser {
                 //ORDERED LIST
                 11 -> {
 
-                    val reg = "^(\\d+\\. )".toRegex().find(string.subSequence(startIndex, endIndex))
+                    val reg = "^(\\d+\\.) ".toRegex().find(string.subSequence(startIndex, endIndex))
                     val order = reg!!.groups[1]!!.value
 
                     //text without "\\d+\\. "
