@@ -17,7 +17,7 @@ import ru.skillbranch.skillarticles.ui.custom.SearchSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.HeaderSpan
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-open class SearchBgHelper(
+class SearchBgHelper(
     context: Context,
     private val focusListener: ((Int, Int) -> Unit)? = null,
     mockDrawable: Drawable? = null //for mock drawable

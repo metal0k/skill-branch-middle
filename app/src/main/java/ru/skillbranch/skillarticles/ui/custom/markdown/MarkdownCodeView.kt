@@ -22,7 +22,7 @@ import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 
 @SuppressLint("ViewConstructor")
-open class MarkdownCodeView private constructor(
+class MarkdownCodeView private constructor(
     context: Context,
     fontSize: Float
 ) : ViewGroup(context, null, 0), IMarkdownView {

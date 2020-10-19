@@ -28,7 +28,7 @@ import kotlin.math.hypot
 
 
 @SuppressLint("ViewConstructor")
-open class MarkdownImageView private constructor(
+class MarkdownImageView private constructor(
     context: Context,
     fontSize: Float
 ) : ViewGroup(context, null, 0), IMarkdownView {
