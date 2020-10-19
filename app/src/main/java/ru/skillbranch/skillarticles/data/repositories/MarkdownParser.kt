@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.markdown
+package ru.skillbranch.skillarticles.ui.custom.markdown
 
 import java.util.regex.Pattern
 
@@ -228,7 +228,8 @@ object MarkdownParser {
                             val element = Element.BlockCode(
                                 type,
                                 line + if (idx < lines.size.dec()) '\n' else "",
-                                subelements)
+                                subelements
+                            )
                             parents.add(element)
                             parents.add(Element.Text("\n"))
 
