@@ -1,16 +1,22 @@
 package ru.skillbranch.skillarticles.ui.custom.markdown
 
+//import ru.skillbranch.skillarticles.extensions.groupByBounds
+
 import android.content.Context
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.SparseArray
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.groupByBounds
-//import ru.skillbranch.skillarticles.extensions.groupByBounds
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 import kotlin.properties.Delegates
+
 
 class MarkdownContentView @JvmOverloads constructor(
     context: Context,
@@ -165,5 +171,50 @@ class MarkdownContentView @JvmOverloads constructor(
         children.filterIsInstance<MarkdownCodeView>()
             .forEach { it.copyListener = listener }
     }
+
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
+        dispatchFreezeSelfOnly(container)
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
+        dispatchThawSelfOnly(container)
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        return Bundle().apply {
+            putParcelable(id.toString(), super.onSaveInstanceState())
+            if (ids.size == 0) {
+                for (i in 0..childCount.dec())
+                    ids.add(View.generateViewId())
+            }
+            children.forEachIndexed{i, c -> c.id = ids[i]}
+            putIntegerArrayList("${id}_childrenIds", ids)
+            putSparseParcelableArray("${id}_childrenStates", saveChildViewStates())
+        }
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        var newState = state
+        if (newState is Bundle) {
+            val childrenState = newState.getSparseParcelableArray<Parcelable>("${id}_childrenStates")
+            ids = newState.getIntegerArrayList("${id}_childrenIds") as ArrayList<Int>
+            children.forEachIndexed{i, c -> c.id = ids[i]}
+            childrenState?.let { restoreChildViewStates(it) }
+            newState = newState.getParcelable(id.toString())
+        }
+        super.onRestoreInstanceState(newState)
+    }
+
+    private fun ViewGroup.saveChildViewStates(): SparseArray<Parcelable> {
+        val childViewStates = SparseArray<Parcelable>()
+        children.forEach { child -> child.saveHierarchyState(childViewStates) }
+        return childViewStates
+    }
+
+    private fun ViewGroup.restoreChildViewStates(childViewStates: SparseArray<Parcelable>) {
+        children.forEach { child -> child.restoreHierarchyState(childViewStates) }
+    }
+
+
 }
 

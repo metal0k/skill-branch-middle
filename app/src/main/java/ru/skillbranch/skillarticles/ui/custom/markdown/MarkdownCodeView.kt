@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Selection
 import android.text.Spannable
 import android.view.View
@@ -14,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.VisibleForTesting
+import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
@@ -131,6 +134,7 @@ class MarkdownCodeView private constructor(
         fontSize: Float,
         code: CharSequence
     ) : this(context, fontSize) {
+//        isSaveEnabled = true;
         codeString = code
         isSingleLine = code.lines().size == 1
         tv_codeView.setText(codeString, TextView.BufferType.SPANNABLE)
@@ -220,4 +224,46 @@ class MarkdownCodeView private constructor(
         (background as GradientDrawable).color = ColorStateList.valueOf(bgColor)
         tv_codeView.setTextColor(textColor)
     }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssManual = isManual
+        savedState.ssDark = isDark
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        super.onRestoreInstanceState(state)
+        if (state is SavedState) {
+            isManual = state.ssManual
+            isDark = state.ssDark
+            applyColors()
+        }
+    }
+
+
+    private class SavedState : BaseSavedState, Parcelable {
+        var ssDark: Boolean = false
+        var ssManual: Boolean = false
+
+        constructor(superState: Parcelable?) : super(superState)
+        constructor(src: Parcel) : super(src) {
+            ssDark = src.readInt() == 1
+            ssManual = src.readInt() == 1
+        }
+
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            super.writeToParcel(dst, flags)
+            dst.writeInt(if (ssDark) 1 else 0)
+            dst.writeInt(if (ssManual) 1 else 0)
+        }
+
+        override fun describeContents() = 0
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+        }
+    }
+
 }

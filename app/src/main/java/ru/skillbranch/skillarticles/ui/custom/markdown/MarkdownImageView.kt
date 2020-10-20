@@ -3,6 +3,8 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Spannable
 import android.view.*
 import android.widget.ImageView
@@ -49,23 +51,31 @@ class MarkdownImageView private constructor(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val iv_image: ImageView
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val tv_title: MarkdownTextView
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var tv_alt: TextView? = null
 
     @Px
     private val titleTopMargin: Int = context.dpToIntPx(8)
+
     @Px
     private val titlePadding: Int = context.dpToIntPx(56)
+
     @Px
     private val cornerRadius: Float = context.dpToPx(4)
+
     @ColorInt
     private val colorSurface: Int = context.attrValue(R.attr.colorSurface)
+
     @ColorInt
     private val colorOnSurface: Int = context.attrValue(R.attr.colorOnSurface)
+
     @ColorInt
     private val colorOnBackground: Int = context.attrValue(R.attr.colorOnBackground)
+
     @ColorInt
     private var lineColor: Int = context.getColor(R.color.color_divider)
 
@@ -109,7 +119,7 @@ class MarkdownImageView private constructor(
         title: CharSequence,
         alt: String?
     ) : this(context, fontSize) {
-
+        isSaveEnabled = true;
         imageUrl = url
         imageTitle = title
 
@@ -239,6 +249,41 @@ class MarkdownImageView private constructor(
         va.doOnEnd { tv_alt?.isVisible = false }
         va.start()
     }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssAltVisible = tv_alt?.isVisible ?: false
+        return savedState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        super.onRestoreInstanceState(state)
+        if (state is SavedState) {
+            tv_alt?.isVisible = state.ssAltVisible;
+        }
+    }
+
+    private class SavedState : BaseSavedState, Parcelable {
+        var ssAltVisible: Boolean = false
+
+        constructor(superState: Parcelable?) : super(superState)
+        constructor(src: Parcel) : super(src) {
+            ssAltVisible = src.readInt() == 1
+        }
+
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            super.writeToParcel(dst, flags)
+            dst.writeInt(if (ssAltVisible) 1 else 0)
+        }
+
+        override fun describeContents() = 0
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+        }
+    }
+
 }
 
 class AspectRatioResizeTransform : BitmapTransformation() {
