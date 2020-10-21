@@ -119,7 +119,6 @@ class MarkdownImageView private constructor(
         title: CharSequence,
         alt: String?
     ) : this(context, fontSize) {
-        isSaveEnabled = true;
         imageUrl = url
         imageTitle = title
 

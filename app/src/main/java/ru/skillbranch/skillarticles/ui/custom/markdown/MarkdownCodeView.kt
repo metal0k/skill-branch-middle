@@ -134,7 +134,6 @@ class MarkdownCodeView private constructor(
         fontSize: Float,
         code: CharSequence
     ) : this(context, fontSize) {
-//        isSaveEnabled = true;
         codeString = code
         isSingleLine = code.lines().size == 1
         tv_codeView.setText(codeString, TextView.BufferType.SPANNABLE)
