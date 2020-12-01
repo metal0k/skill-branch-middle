@@ -158,6 +158,7 @@ class MarkdownCodeView private constructor(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        println("l: $l, t: $t, r: $r, b: $b")
         val usedHeight = paddingTop
         val bodyWidth = r - l - paddingLeft - paddingRight
         val left = paddingLeft
@@ -225,44 +226,48 @@ class MarkdownCodeView private constructor(
     }
 
     override fun onSaveInstanceState(): Parcelable? {
-        val savedState = SavedState(super.onSaveInstanceState())
-        savedState.ssManual = isManual
-        savedState.ssDark = isDark
+        val savedState =
+            SavedState(super.onSaveInstanceState())
+        savedState.ssIsManual = isManual
+        savedState.ssIsDark = isDark
         return savedState
     }
 
-    override fun onRestoreInstanceState(state: Parcelable?) {
+    override fun onRestoreInstanceState(state: Parcelable) {
         super.onRestoreInstanceState(state)
         if (state is SavedState) {
-            isManual = state.ssManual
-            isDark = state.ssDark
+            isManual = state.ssIsManual
+            isDark = state.ssIsDark
             applyColors()
         }
     }
 
-
     private class SavedState : BaseSavedState, Parcelable {
-        var ssDark: Boolean = false
-        var ssManual: Boolean = false
+        var ssIsManual: Boolean = false
+        var ssIsDark: Boolean = false
 
         constructor(superState: Parcelable?) : super(superState)
+
         constructor(src: Parcel) : super(src) {
-            ssDark = src.readInt() == 1
-            ssManual = src.readInt() == 1
+            //restore state from parcel
+            ssIsManual = src.readInt() == 1
+            ssIsDark = src.readInt() == 1
         }
 
         override fun writeToParcel(dst: Parcel, flags: Int) {
+            //write state to parcel
             super.writeToParcel(dst, flags)
-            dst.writeInt(if (ssDark) 1 else 0)
-            dst.writeInt(if (ssManual) 1 else 0)
+            dst.writeInt(if (ssIsManual) 1 else 0)
+            dst.writeInt(if (ssIsDark) 1 else 0)
         }
 
         override fun describeContents() = 0
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+            override fun createFromParcel(parcel: Parcel) =
+                SavedState(parcel)
+
             override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
         }
     }
-
 }
