@@ -18,6 +18,11 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
         repository.setAuth(true)
         navigate(NavigationCommand.FinishLogin(dest))
     }
+
+    fun checkIsAuthAndRedirect(dest:Int?){
+        if(repository.isAuth().value == true)
+            navigate(NavigationCommand.FinishLogin(dest))
+    }
 }
 
 data class AuthState(val isAuth: Boolean = false): IViewModelState
