@@ -21,7 +21,7 @@ class AuthFragment : BaseFragment<AuthViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.checkIsAuthAndRedirect(if (args.privateDestination == -1) null else args.privateDestination)
+//        viewModel.checkIsAuthAndRedirect(if (args.privateDestination == -1) null else args.privateDestination)
     }
 
     override fun setupViews() {
