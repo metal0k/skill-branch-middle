@@ -6,10 +6,12 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
-import ru.skillbranch.skillarticles.data.repositories.ArticlesRepository
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
-class ArticlesAdapter(private val listener: (ArticleItemData) -> Unit) :
+class ArticlesAdapter(
+    private val listener: (ArticleItemData) -> Unit,
+    private val bookmarkToggleListener: (ArticleItemData, Boolean) -> Unit
+) :
     PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
@@ -18,7 +20,7 @@ class ArticlesAdapter(private val listener: (ArticleItemData) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
-        holder.bind(getItem(position), listener)
+        holder.bind(getItem(position), listener, bookmarkToggleListener)
     }
 }
 
@@ -33,11 +35,12 @@ class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItemData>() {
 class ArticleVH(val containerView: View) : RecyclerView.ViewHolder(containerView) {
     fun bind(
         item: ArticleItemData?,
-        listener: (ArticleItemData) -> Unit
+        listener: (ArticleItemData) -> Unit,
+        bookmarkToggleListener: (ArticleItemData, Boolean) -> Unit
     ) {
 
         //if use placeholder item me be null
-        (containerView as ArticleItemView).bind(item!!) { id, isBookmark -> ArticlesRepository.updateBookmark(id, !isBookmark) }
+        (containerView as ArticleItemView).bind(item!!) { id, isBookmark ->  bookmarkToggleListener.invoke(item, isBookmark)}
         itemView.setOnClickListener { listener(item) }
 
     }

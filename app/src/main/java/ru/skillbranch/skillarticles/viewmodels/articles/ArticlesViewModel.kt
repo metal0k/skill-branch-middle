@@ -30,13 +30,30 @@ class ArticlesViewModel(handle: SavedStateHandle) :
     private val listData = Transformations.switchMap(state) {
         when {
             it.isSearch && !it.searchQuery.isNullOrBlank() -> buildPagedList(
+                if (bookmarkMode)
+                repository.searchBookmarkArticles(
+                    it.searchQuery
+                )
+                else
                 repository.searchArticles(
                     it.searchQuery
                 )
             )
-            else -> buildPagedList(repository.allArticles())
+            else -> buildPagedList(
+                if (bookmarkMode)
+                    repository.allBookmarkArticles()
+                else
+                    repository.allArticles())
         }
     }
+
+    public var bookmarkMode: Boolean = false
+       set(value) {
+           if (field != value) {
+               field = value
+               listData.value?.dataSource?.invalidate();
+           }
+       }
 
 
     fun observeList(
@@ -120,8 +137,9 @@ class ArticlesViewModel(handle: SavedStateHandle) :
         updateState { it.copy(isSearch = isSearch) }
     }
 
-    fun handleToggleBookmark(id: String, isChecked: Boolean) {
-
+    fun handleToggleBookmark(id: String, isChecked: Boolean){
+        repository.updateBookmark(id, !isChecked);
+        listData.value?.dataSource?.invalidate();
     }
 }
 

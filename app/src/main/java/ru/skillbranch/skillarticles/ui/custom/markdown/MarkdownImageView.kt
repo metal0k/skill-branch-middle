@@ -238,7 +238,7 @@ class MarkdownImageView private constructor(
             linePositionY,
             linePaint
         )
-        Log.e("MarkdownImageView", "dr: ");
+//        Log.e("MarkdownImageView", "dr: ");
     }
 
     private fun animateShowAlt() {

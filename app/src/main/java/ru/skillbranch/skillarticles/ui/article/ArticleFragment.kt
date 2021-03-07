@@ -132,7 +132,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = commentsAdapter
         }
-
         viewModel.observeList(viewLifecycleOwner){commentsAdapter.submitList(it)}
     }
 

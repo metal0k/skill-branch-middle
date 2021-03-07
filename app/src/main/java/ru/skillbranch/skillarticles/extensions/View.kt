@@ -46,6 +46,4 @@ fun BottomNavigationView.selectDestination(destination: NavDestination) {
         item?.isChecked = true
 //        this.selectedItemId = destination.id
     }
-    //TODO need to implement
-
 }
