@@ -112,6 +112,8 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
 
     override fun setupViews() {
         with(rv_articles) {
+            if (args.bookmarkMode)
+                id = R.id.rv_bookmarks;
             layoutManager = LinearLayoutManager(context)
             adapter = articlesAdapter
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
