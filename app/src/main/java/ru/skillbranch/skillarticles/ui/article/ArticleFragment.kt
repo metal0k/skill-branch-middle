@@ -133,6 +133,20 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             adapter = commentsAdapter
         }
         viewModel.observeList(viewLifecycleOwner){commentsAdapter.submitList(it)}
+
+
+
+        if (!binding.commentText.isNullOrEmpty()) {
+            val commText = binding.commentText;
+            view?.postDelayed({
+                et_comment.setText(commText);
+                et_comment.requestFocus();
+                scroll.smoothScrollTo(0, wrap_comments.top)
+                et_comment.context.showKeyboard(et_comment)
+
+                //viewModel.handleSendComment(commText!!);
+            }, 500)
+        }
     }
 
     override fun onDestroyView() {
@@ -299,6 +313,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         }
 
+        var commentText: String? = null;
+
         override val afterInflated: (() -> Unit)? = {
             dependsOn<Boolean, Boolean, List<Pair<Int, Int>>, Int>(
                 ::isLoadingContent,
@@ -334,6 +350,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             searchResults = data.searchResults
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottomBar
+            commentText = data.commentText;
         }
 
         override fun saveUi(outState: Bundle) {

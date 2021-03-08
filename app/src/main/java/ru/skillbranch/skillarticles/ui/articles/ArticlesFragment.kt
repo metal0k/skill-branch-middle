@@ -10,14 +10,11 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
-import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.ui.auth.AuthFragmentArgs
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
 import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
-import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
