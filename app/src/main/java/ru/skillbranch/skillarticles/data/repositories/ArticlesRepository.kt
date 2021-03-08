@@ -17,13 +17,13 @@ object ArticlesRepository {
         ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
 
     fun allBookmarkArticles(): ArticlesDataFactory =
-        ArticlesDataFactory(ArticleStrategy.AllArticles(::findBookmarkArticlesByRange))
+        ArticlesDataFactory(ArticleStrategy.BookmarkArticles(::findBookmarkArticlesByRange))
 
     fun searchArticles(searchQuery: String) =
         ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchArticlesByTitle, searchQuery))
 
     fun searchBookmarkArticles(searchQuery: String) =
-        ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchBookmarkArticlesByTitle, searchQuery))
+        ArticlesDataFactory(ArticleStrategy.SearchBookmark(::searchBookmarkArticlesByTitle, searchQuery))
 
     private fun findArticlesByRange(start: Int, size: Int) = local.localArticleItems
         .drop(start)
