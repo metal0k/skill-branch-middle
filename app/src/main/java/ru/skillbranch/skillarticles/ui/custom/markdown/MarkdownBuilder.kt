@@ -43,11 +43,11 @@ class MarkdownBuilder(context: Context) {
         return builder.apply {
             when (element) {
                 is Element.Text -> append(element.text)
-
                 is Element.UnorderedListItem -> {
                     inSpans(UnorderedListSpan(gap, bulletRadius, colorSecondary)) {
-                        for (child in element.elements)
+                        for (child in element.elements) {
                             buildElement(child, builder)
+                        }
                     }
                 }
 
@@ -56,8 +56,9 @@ class MarkdownBuilder(context: Context) {
                         BlockquotesSpan(gap, strikeWidth, colorSecondary),
                         StyleSpan(Typeface.ITALIC)
                     ) {
-                        for (child in element.elements)
+                        for (child in element.elements) {
                             buildElement(child, builder)
+                        }
                     }
                 }
 
@@ -77,22 +78,25 @@ class MarkdownBuilder(context: Context) {
 
                 is Element.Italic -> {
                     inSpans(StyleSpan(Typeface.ITALIC)) {
-                        for (child in element.elements)
+                        for (child in element.elements) {
                             buildElement(child, builder)
+                        }
                     }
                 }
 
                 is Element.Bold -> {
                     inSpans(StyleSpan(Typeface.BOLD)) {
-                        for (child in element.elements)
+                        for (child in element.elements) {
                             buildElement(child, builder)
+                        }
                     }
                 }
 
                 is Element.Strike -> {
                     inSpans(StrikethroughSpan()) {
-                        for (child in element.elements)
+                        for (child in element.elements) {
                             buildElement(child, builder)
+                        }
                     }
                 }
 
@@ -110,39 +114,24 @@ class MarkdownBuilder(context: Context) {
 
                 is Element.Link -> {
                     inSpans(
-                        IconLinkSpan(linkIcon, gap, colorPrimary, strikeWidth),
+                        IconLinkSpan(linkIcon,  gap, colorPrimary, strikeWidth),
                         URLSpan(element.link)
                     ) {
                         append(element.text)
                     }
                 }
 
-/*                is Element.BlockCode -> {
-                    inSpans(
-                        BlockCodeSpan(
-                            colorPrimary,
-                            colorSurface,
-                            cornerRadius,
-                            gap,
-                            element.type
-                        )
-                    ) {
-                        for (child in element.elements)
-                            buildElement(child, builder)
-                    }
 
-                }*/
 
-                is Element.OrderedListItem -> {
+                is Element.OrderedListItem  -> {
                     inSpans(OrderedListSpan(gap, element.order, colorPrimary)) {
-                        for (child in element.elements)
+                        for (child in element.elements) {
                             buildElement(child, builder)
+                        }
                     }
-
                 }
 
                 else -> append(element.text)
-
             }
         }
     }

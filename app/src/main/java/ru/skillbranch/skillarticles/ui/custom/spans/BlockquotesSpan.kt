@@ -46,6 +46,7 @@ class BlockquotesSpan(
         strokeWidth = quoteWidth
 
         block()
+
         color = oldColor
         style = oldStyle
         strokeWidth = oldWidth

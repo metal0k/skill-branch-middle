@@ -6,7 +6,6 @@ import android.graphics.*
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Spannable
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -52,31 +51,23 @@ class MarkdownImageView private constructor(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val iv_image: ImageView
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val tv_title: MarkdownTextView
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var tv_alt: TextView? = null
 
     @Px
     private val titleTopMargin: Int = context.dpToIntPx(8)
-
     @Px
     private val titlePadding: Int = context.dpToIntPx(56)
-
     @Px
     private val cornerRadius: Float = context.dpToPx(4)
-
     @ColorInt
     private val colorSurface: Int = context.attrValue(R.attr.colorSurface)
-
     @ColorInt
     private val colorOnSurface: Int = context.attrValue(R.attr.colorOnSurface)
-
     @ColorInt
     private val colorOnBackground: Int = context.attrValue(R.attr.colorOnBackground)
-
     @ColorInt
     private var lineColor: Int = context.getColor(R.color.color_divider)
 
@@ -174,7 +165,6 @@ class MarkdownImageView private constructor(
                 MeasureSpec.makeMeasureSpec((width / aspectRatio).toInt(), MeasureSpec.EXACTLY)
             iv_image.measure(ms, hms)
         } else iv_image.measure(ms, heightMeasureSpec)
-
         tv_title.measure(ms, heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec)
 
@@ -238,7 +228,6 @@ class MarkdownImageView private constructor(
             linePositionY,
             linePaint
         )
-//        Log.e("MarkdownImageView", "dr: ");
     }
 
     private fun animateShowAlt() {

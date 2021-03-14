@@ -40,14 +40,13 @@
         android:name="ru.skillbranch.skillarticles.ui.articles.ArticlesFragment"
         android:label="@string/title_articles"
         tools:layout="@layout/fragment_articles" >
-        <argument
-            android:name="bookmark_mode"
-            app:argType="boolean"
-            android:defaultValue="false"
-            />
         <action
-            android:id="@+id/action_nav_articles_to_page_article"
+            android:id="@+id/action_to_page_article"
             app:destination="@id/page_article" />
+        <argument
+            android:name="isBookmarks"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
@@ -58,14 +57,13 @@
         android:id="@+id/nav_bookmarks"
         android:name="ru.skillbranch.skillarticles.ui.articles.ArticlesFragment"
         android:label="@string/title_bookmarks"
-        tools:layout="@layout/fragment_articles">
+        tools:layout="@layout/fragment_articles" >
         <argument
-            android:name="bookmark_mode"
+            android:name="isBookmarks"
             app:argType="boolean"
-            android:defaultValue="true"
-            />
+            android:defaultValue="true" />
         <action
-            android:id="@+id/action_nav_articles_to_page_article"
+            android:id="@+id/action_to_page_article"
             app:destination="@id/page_article" />
     </fragment>
     <fragment

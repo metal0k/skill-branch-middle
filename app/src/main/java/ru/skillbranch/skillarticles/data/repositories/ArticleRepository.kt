@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.data.repositories
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -68,8 +67,7 @@ object ArticleRepository {
                 .takeLast(abs(size))
 
             else -> emptyList()
-        }.apply { sleep(500) }
-
+        }.apply { sleep(1500) }
     }
 
     fun sendComment(articleId: String, comment: String, answerToSlug: String?) {
@@ -102,10 +100,7 @@ class CommentsDataSource(
         callback: LoadInitialCallback<CommentItemData>
     ) {
         val result = itemProvider(params.requestedInitialKey, params.requestedLoadSize, articleId)
-        Log.e(
-            "ArticleRepository",
-            "loadInitial: key > ${params.requestedInitialKey} size > ${result.size} totalCount > $totalCount"
-        );
+
         callback.onResult(
             if (totalCount > 0) result else emptyList(),
             0,
@@ -115,13 +110,11 @@ class CommentsDataSource(
 
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<CommentItemData>) {
         val result = itemProvider(params.key, params.requestedLoadSize, articleId)
-        Log.e("ArticleRepository", "loadAfter: key > ${params.key} size > ${result.size} ");
         callback.onResult(result)
     }
 
     override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<CommentItemData>) {
         val result = itemProvider(params.key, -params.requestedLoadSize, articleId)
-        Log.e("ArticleRepository", "loadBefore: key > ${params.key} size > ${result.size} ");
         callback.onResult(result)
     }
 

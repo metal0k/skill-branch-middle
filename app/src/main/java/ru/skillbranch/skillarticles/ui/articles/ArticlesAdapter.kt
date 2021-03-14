@@ -9,8 +9,7 @@ import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter(
-    private val listener: (ArticleItemData) -> Unit,
-    private val bookmarkToggleListener: (ArticleItemData, Boolean) -> Unit
+    private val listener: (ArticleItemData, Boolean) -> Unit
 ) :
     PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
 
@@ -20,7 +19,7 @@ class ArticlesAdapter(
     }
 
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
-        holder.bind(getItem(position), listener, bookmarkToggleListener)
+        holder.bind(getItem(position), listener)
     }
 }
 
@@ -35,14 +34,9 @@ class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItemData>() {
 class ArticleVH(val containerView: View) : RecyclerView.ViewHolder(containerView) {
     fun bind(
         item: ArticleItemData?,
-        listener: (ArticleItemData) -> Unit,
-        bookmarkToggleListener: (ArticleItemData, Boolean) -> Unit
+        listener: (ArticleItemData, Boolean) -> Unit
     ) {
-
-        //if use placeholder item me be null
-        (containerView as ArticleItemView).bind(item!!) { id, isBookmark ->  bookmarkToggleListener.invoke(item, isBookmark)}
-        itemView.setOnClickListener { listener(item) }
-
+        (containerView as ArticleItemView).bind(item!!, listener)
     }
 
 }

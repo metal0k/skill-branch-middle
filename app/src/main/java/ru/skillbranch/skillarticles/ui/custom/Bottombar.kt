@@ -102,7 +102,6 @@ class Bottombar @JvmOverloads constructor(
         }
     }
 
-
     fun show(){
         ObjectAnimator.ofFloat(this, "translationY", 0f).start()
     }
@@ -110,7 +109,6 @@ class Bottombar @JvmOverloads constructor(
     fun hide(){
         ObjectAnimator.ofFloat(this, "translationY", height.toFloat()).start()
     }
-
 
     private class SavedState : BaseSavedState, Parcelable {
         var ssIsSearchMode: Boolean = false

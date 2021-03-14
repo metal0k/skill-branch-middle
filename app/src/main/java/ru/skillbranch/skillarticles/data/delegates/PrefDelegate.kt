@@ -4,38 +4,46 @@ import ru.skillbranch.skillarticles.data.local.PrefManager
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-@Suppress("UNCHECKED_CAST")
-class PrefDelegate<TValue>(
-    private val defValue: TValue
-) : ReadWriteProperty<PrefManager, TValue?> {
+class PrefDelegate<T>(private val defaultValue: T) {
+    private var storedValue: T? = null
 
-    override fun getValue(thisRef: PrefManager, property: KProperty<*>): TValue? {
-        with(thisRef.preferences) {
-            return when (defValue) {
-                is Boolean -> (getBoolean(property.name, defValue) as? TValue) ?: defValue
-                is Int -> (getInt(property.name, defValue) as TValue) ?: defValue
-                is Float -> (getFloat(property.name, defValue) as TValue) ?: defValue
-                is Long -> (getLong(property.name, defValue) as TValue) ?: defValue
-                is String -> (getString(property.name, defValue) as TValue) ?: defValue
-                else -> throw NotFoundRealizationException(defValue)
+    operator fun provideDelegate(
+        thisRef: PrefManager,
+        prop: KProperty<*>
+    ): ReadWriteProperty<PrefManager, T?> {
+        val key = prop.name
+        return object : ReadWriteProperty<PrefManager, T?> {
+            override fun getValue(thisRef: PrefManager, property: KProperty<*>): T? {
+                if (storedValue == null) {
+                    @Suppress("UNCHECKED_CAST")
+                    storedValue = when(defaultValue) {
+                        is Int -> thisRef.preferences.getInt(key,defaultValue as Int) as T
+                        is Long -> thisRef.preferences.getLong(key,defaultValue as Long) as T
+                        is Float -> thisRef.preferences.getFloat(key,defaultValue as Float) as T
+                        is String -> thisRef.preferences.getString(key,defaultValue as String) as T
+                        is Boolean -> thisRef.preferences.getBoolean(key,defaultValue as Boolean) as T
+                        else -> error("This type can not be stored into Preferences")
+                    }
+                }
+                return storedValue
             }
+
+            override fun setValue(thisRef: PrefManager, property: KProperty<*>, value: T?) {
+                with(thisRef.preferences.edit()) {
+                    when (value) {
+                        is String -> putString(key, value)
+                        is Int -> putInt(key, value)
+                        is Boolean -> putBoolean(key, value)
+                        is Long -> putLong(key, value)
+                        is Float -> putFloat(key, value)
+                        else -> error("Only primitive types can be stored into Preferences")
+                    }
+                    apply()
+                }
+                storedValue = value
+            }
+
         }
     }
-
-    override fun setValue(thisRef: PrefManager, property: KProperty<*>, value: TValue?) {
-        with(thisRef.preferences.edit()) {
-            when (value) {
-                is Boolean -> putBoolean(property.name, value)
-                is Int -> putInt(property.name, value)
-                is Float -> putFloat(property.name, value)
-                is Long -> putLong(property.name, value)
-                is String -> putString(property.name, value)
-                else -> throw NotFoundRealizationException(value)
-            }
-            apply()
-        }
-    }
-
-    class NotFoundRealizationException(defValue: Any?) : Exception("not found realization for $defValue")
 
 }

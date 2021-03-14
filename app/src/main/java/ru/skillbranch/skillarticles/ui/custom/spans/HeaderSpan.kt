@@ -55,23 +55,25 @@ class HeaderSpan constructor(
         lineHeight: Int,
         fm: Paint.FontMetricsInt?
     ) {
+
         fm ?: return
 
         text as Spanned
-
         val spanStart = text.getSpanStart(this)
         val spanEnd = text.getSpanEnd(this)
 
-
-        if (spanStart == start) {
+        if(spanStart == start){
             originAscent = fm.ascent
             fm.ascent = (fm.ascent - marginTop).toInt()
             topExtraPadding = marginTop.toInt()
             firstLineBounds = start..end.dec()
-        } else
+        }else{
             fm.ascent = originAscent
+        }
 
-        if (spanEnd == end.dec()) {
+
+        //line break +1 character
+        if(spanEnd == end.dec()){
             val originDescent = fm.descent
             val originHeight = fm.descent - originAscent
             fm.descent = (originHeight * linePadding + marginBottom).toInt()
@@ -85,7 +87,7 @@ class HeaderSpan constructor(
 
     override fun updateMeasureState(paint: TextPaint) {
         with(paint) {
-            textSize *= sizes.getOrElse(level) {1f}
+            textSize *= sizes.getOrElse(level) { 1f }
             isFakeBoldText = true
         }
     }
@@ -103,8 +105,9 @@ class HeaderSpan constructor(
         lineTop: Int, lineBaseline: Int, lineBottom: Int, text: CharSequence?, lineStart: Int,
         lineEnd: Int, isFirstLine: Boolean, layout: Layout?
     ) {
+        //for 1 or 2 level and last line
         if ((level == 1 || level == 2) && (text as Spanned).getSpanEnd(this) == lineEnd) {
-            paint.forLine{
+            paint.forLine {
                 val lh = (paint.descent() - paint.ascent()) * sizes.getOrElse(level) { 1f }
                 val lineOffset = lineBaseline + lh * linePadding
 
@@ -117,7 +120,8 @@ class HeaderSpan constructor(
                 )
             }
         }
-        //        canvas.drawFontLines(lineTop, lineBottom, lineBaseline, paint)
+
+//        canvas.drawFontLines(lineTop, lineBottom, lineBaseline, paint)
     }
 
     override fun getLeadingMargin(first: Boolean): Int {
@@ -152,4 +156,5 @@ class HeaderSpan constructor(
 //        drawLine(0f,paint.ascent() + lineBaseline,width + 0f,paint.ascent() + lineBaseline,Paint().apply { color = Color.BLACK })
 //        drawLine(0f,paint.descent() + lineBaseline,width + 0f,paint.descent() + lineBaseline,Paint().apply { color = Color.MAGENTA })
     }
+
 }

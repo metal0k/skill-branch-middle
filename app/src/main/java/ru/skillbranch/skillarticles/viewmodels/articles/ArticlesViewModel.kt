@@ -28,41 +28,28 @@ class ArticlesViewModel(handle: SavedStateHandle) :
             .build()
     }
     private val listData = Transformations.switchMap(state) {
+        val searchFn = if (!it.isBookmark) repository::searchArticles
+        else repository::searchBookmarkedArticles
+
+        val defaultFn = if (!it.isBookmark) repository::allArticles
+        else repository::allBookmarked
+
         when {
             it.isSearch && !it.searchQuery.isNullOrBlank() -> buildPagedList(
-                if (bookmarkMode)
-                repository.searchBookmarkArticles(
-                    it.searchQuery
-                )
-                else
-                repository.searchArticles(
-                    it.searchQuery
-                )
+                searchFn(it.searchQuery)
             )
-            else -> buildPagedList(
-                if (bookmarkMode)
-                    repository.allBookmarkArticles()
-                else
-                    repository.allArticles())
+            else -> buildPagedList(defaultFn())
         }
     }
 
-    public var bookmarkMode: Boolean = false
-       set(value) {
-           if (field != value) {
-               field = value
-               listData.value?.dataSource?.invalidate();
-           }
-       }
-
-
     fun observeList(
         owner: LifecycleOwner,
+        isBookmark: Boolean = false,
         onChange: (list: PagedList<ArticleItemData>) -> Unit
     ) {
+        updateState { it.copy(isBookmark = isBookmark) }
         listData.observe(owner, Observer { onChange(it) })
     }
-
 
     private fun buildPagedList(
         dataFactory: ArticlesDataFactory
@@ -88,7 +75,6 @@ class ArticlesViewModel(handle: SavedStateHandle) :
     }
 
     private fun itemAtEndHandle(lastLoadArticle: ArticleItemData) {
-        Log.e("ArticlesViewModel", "itemAtEndHandle: ");
         viewModelScope.launch(Dispatchers.IO) {
             val items = repository.loadArticlesFromNetwork(
                 start = lastLoadArticle.id.toInt().inc(),
@@ -112,7 +98,6 @@ class ArticlesViewModel(handle: SavedStateHandle) :
     }
 
     private fun zeroLoadingHandle() {
-        Log.e("ArticlesViewModel", "zeroLoadingHandle: ");
         notify(Notify.TextMessage("Storage is empty"))
         viewModelScope.launch(Dispatchers.IO) {
             val items =
@@ -137,17 +122,19 @@ class ArticlesViewModel(handle: SavedStateHandle) :
         updateState { it.copy(isSearch = isSearch) }
     }
 
-    fun handleToggleBookmark(id: String, isChecked: Boolean){
-        repository.updateBookmark(id, !isChecked);
-        listData.value?.dataSource?.invalidate();
+    fun handleToggleBookmark(id: String, isChecked: Boolean) {
+        repository.updateBookmark(id, !isChecked)
+        listData.value?.dataSource?.invalidate()
     }
 }
 
 data class ArticlesState(
     val isSearch: Boolean = false,
     val searchQuery: String? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val isBookmark: Boolean = false
 ) : IViewModelState
+
 
 class ArticlesBoundaryCallback(
     private val zeroLoadingHandle: () -> Unit,
