@@ -73,18 +73,16 @@ data class ArticleItem(
         content.share_link AS share_link, content.content AS content,
         personal.is_bookmark AS is_bookmark, personal.is_like AS is_like,
         content.source AS source,
-        tags.tags_string AS tags
+        GROUP_CONCAT(refs.t_id)  AS tags
         FROM articles AS article
         INNER JOIN article_categories AS category ON category.category_id = article.category_id
         LEFT JOIN article_contents AS content ON content.article_id = id
         LEFT JOIN article_personal_infos AS personal ON personal.article_id = id
-        LEFT JOIN (
-            SELECT refs.a_id, GROUP_CONCAT(tags.tag) AS tags_string 
-            FROM article_tag_x_ref AS refs 
-            JOIN article_tags AS tags ON refs.t_id = tags.tag GROUP BY a_id
-            ) AS tags ON tags.a_id = id
+        LEFT JOIN article_tag_x_ref AS refs ON refs.a_id = id
+        GROUP BY id
     """
 )
+
 @TypeConverters(MarkdownConverter::class, StringListConverter::class)
 data class ArticleFull(
     val id: String,

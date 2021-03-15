@@ -5,10 +5,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -29,12 +31,14 @@ import kotlinx.android.synthetic.main.layout_bottombar.view.*
 import kotlinx.android.synthetic.main.layout_submenu.view.*
 import kotlinx.android.synthetic.main.search_view_layout.view.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.repositories.Element
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.*
 import ru.skillbranch.skillarticles.ui.base.*
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import ru.skillbranch.skillarticles.ui.custom.ShimmerDrawable
+import ru.skillbranch.skillarticles.ui.custom.markdown.MarkdownBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleViewModel
@@ -185,6 +189,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_author.text = args.author
         tv_date.text = args.date.format()
 
+        tv_source.apply {
+            isVisible = false
+            movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        tv_tags.isVisible = false
+
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
             viewModel.handleSendComment(view.text.toString())
@@ -310,6 +321,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
 
+        private val markdownBuilder = MarkdownBuilder(requireContext())
+
         private var isLoadingContent by RenderProp(false) {
             Log.e("ArticleFragment", "content is loading: $it");
             tv_text_content.isLoading = it
@@ -376,6 +389,40 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isBlank() && et_comment.hasFocus()) et_comment.clearFocus()
         }
 
+        private var source by RenderProp(""){
+            tv_source.isVisible = it.isNotEmpty()
+            if (it.isEmpty())
+                return@RenderProp;
+
+            markdownBuilder.markdownToSpan(
+                MarkdownElement.Text(
+                    mutableListOf(Element.Link(it, "Article source"))
+                )
+            ).also { spanned ->
+                tv_source.setText(spanned, TextView.BufferType.SPANNABLE)
+            }
+
+        }
+
+        private var tags: List<String> by RenderProp(emptyList()) {
+            tv_tags.isVisible = it.isNotEmpty()
+            if (it.isEmpty())
+                return@RenderProp
+
+            markdownBuilder
+                .markdownToSpan(
+                    MarkdownElement.Text(
+                        it.flatMap { tag ->
+                            listOf(Element.InlineCode(tag), Element.Text(" "))
+                        }.toMutableList()
+                    )
+                )
+                .also { spannedString ->
+                    tv_tags.setText(spannedString, TextView.BufferType.SPANNABLE)
+                }
+
+        }
+
         override val afterInflated: (() -> Unit)? = {
             dependsOn<Boolean, Boolean, List<Pair<Int, Int>>, Int>(
                 ::isLoadingContent,
@@ -412,6 +459,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottomBar
             comment = data.commentText ?: ""
+            source = data.source ?: ""
+            tags = data.tags
+
         }
 
         override fun saveUi(outState: Bundle) {

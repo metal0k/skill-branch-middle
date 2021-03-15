@@ -25,8 +25,8 @@ interface IArticleRepository {
     fun toggleBookmark(articleId: String)
     fun isAuth(): MutableLiveData<Boolean>
     fun loadCommentsByRange(slug: String?, size: Int, articleId: String): List<CommentItemData>
-    fun sendMessage(articleId: String, text: String, answerToSlug: String?)
-    fun loadAllComments(articleId: String, total: Int): CommentsDataFactory
+    fun sendMessage(articleId: String, comment: String, answerToSlug: String?)
+    fun loadAllComments(articleId: String, totalCount: Int): CommentsDataFactory
     fun decrementLike(articleId: String)
     fun incrementLike(articleId: String)
     fun updateSettings(appSettings: AppSettings)
