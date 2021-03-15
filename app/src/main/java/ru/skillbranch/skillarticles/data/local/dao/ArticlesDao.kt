@@ -37,14 +37,14 @@ interface ArticlesDao : BaseDao<Article>{
         SELECT * FROM ArticleItem
         WHERE category_id IN (:categoryIds)
     """)
-    fun findArticleItemsByCategoryIds(categoryIds: List<String>): List<ArticleItem>
+    fun findArticleItemsByCategoryIds(categoryIds: List<String>): LiveData<List<ArticleItem>>
 
     @Query("""
         SELECT * FROM ArticleItem
         INNER JOIN article_tag_x_ref AS refs ON refs.a_id = id
         WHERE refs.t_id = :tag
     """)
-    fun findArticlesByTagId(tag: String): List<ArticleItem>
+    fun findArticlesByTagId(tag: String): LiveData<List<ArticleItem>>
 
 
     @RawQuery(observedEntities = [ArticleItem::class])
