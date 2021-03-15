@@ -195,7 +195,9 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
     inner class ArticlesBinding : Binding() {
         var categories: List<CategoryData> = emptyList()
         var selectedCategories: List<String> by RenderProp(emptyList()){
-            //TODO selected color on icon
+            val filterMenuItem = toolbar.menu.findItem(R.id.action_filter) ?: return@RenderProp
+            val colorRes = if (it.isEmpty()) R.color.color_on_article_bar else R.color.color_accent
+            filterMenuItem.icon.setTint(requireContext().getColor(colorRes))
         }
         var searchQuery: String? = null
         var isSearch: Boolean = false
