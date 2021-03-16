@@ -12,7 +12,7 @@
     android:paddingBottom="8dp">
 
     <CheckBox
-        android:id="@+id/chk_select"
+        android:id="@+id/ch_select"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:clickable="false"

@@ -194,7 +194,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             movementMethod = LinkMovementMethod.getInstance()
         }
 
-        tv_tags.isVisible = false
+        tv_hashtags.isVisible = false
 
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
@@ -405,7 +405,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         }
 
         private var tags: List<String> by RenderProp(emptyList()) {
-            tv_tags.isVisible = it.isNotEmpty()
+            tv_hashtags.isVisible = it.isNotEmpty()
             if (it.isEmpty())
                 return@RenderProp
 
@@ -418,7 +418,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                     )
                 )
                 .also { spannedString ->
-                    tv_tags.setText(spannedString, TextView.BufferType.SPANNABLE)
+                    tv_hashtags.setText(spannedString, TextView.BufferType.SPANNABLE)
                 }
 
         }

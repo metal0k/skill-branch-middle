@@ -12,14 +12,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.ColumnInfo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_category.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
-import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
@@ -105,7 +103,7 @@ class CategoryVH(override val containerView: View, val listener: (CategoryItem) 
     fun bind(item: CategoryItem?) {
         item ?: return
 
-        chk_select.apply {
+        ch_select.apply {
             isChecked = item.checked
         }
 
@@ -120,7 +118,7 @@ class CategoryVH(override val containerView: View, val listener: (CategoryItem) 
         tv_count.text = item.articlesCount.toString()
         itemView.setOnClickListener {
             listener.invoke(item)
-            chk_select.isChecked = item.checked
+            ch_select.isChecked = item.checked
         }
     }
 }
