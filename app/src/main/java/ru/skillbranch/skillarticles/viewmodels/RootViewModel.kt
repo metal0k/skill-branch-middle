@@ -2,6 +2,8 @@ package ru.skillbranch.skillarticles.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.local.PrefManager
+import ru.skillbranch.skillarticles.data.local.PrefManager.preferences
 import ru.skillbranch.skillarticles.data.repositories.RootRepository
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState

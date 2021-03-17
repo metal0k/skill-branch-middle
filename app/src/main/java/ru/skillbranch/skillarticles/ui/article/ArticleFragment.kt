@@ -5,14 +5,13 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -26,6 +25,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions.circleCropTransform
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
+import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.layout_bottombar.view.*
 import kotlinx.android.synthetic.main.layout_submenu.view.*
@@ -43,6 +43,7 @@ import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.Loading
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
@@ -56,7 +57,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
     private val commentsAdapter by lazy {
         CommentsAdapter {
-            viewModel.handleReplyTo(it.slug, it.user.name)
+            viewModel.handleReplyTo(it.id, it.user.name)
             et_comment.requestFocus()
             scroll.smoothScrollTo(0, wrap_comments.top)
             et_comment.context.showKeyboard(et_comment)
@@ -66,8 +67,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     override val layout: Int = R.layout.fragment_article
     override val binding: ArticleBinding by lazy { ArticleBinding() }
     override val prepareToolbar: (ToolbarBuilder.() -> Unit)? = {
-        this.setTitle(args.title)
-            .setSubtitle(args.category)
+        this.setSubtitle(args.category)
             .setLogo(args.categoryIcon)
             .addMenuItem(
                 MenuItemHolder(
@@ -93,6 +93,17 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
+
+    override fun renderLoading(loadingState: Loading) {
+        when(loadingState){
+            Loading.SHOW_LOADING -> if(!refresh.isRefreshing) root.progress.isVisible = true
+            Loading.SHOW_BLOCKING_LOADING -> root.progress.isVisible = false
+            Loading.HIDE_LOADING ->{
+                root.progress.isVisible = false
+                if(refresh.isRefreshing) refresh.isRefreshing = false
+            }
+        }
     }
 
     override fun setupViews() {
@@ -189,13 +200,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_author.text = args.author
         tv_date.text = args.date.format()
 
-        tv_source.apply {
-            isVisible = false
-            movementMethod = LinkMovementMethod.getInstance()
-        }
-
-        tv_hashtags.isVisible = false
-
         et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyboard(view)
             viewModel.handleSendComment(view.text.toString())
@@ -207,8 +211,10 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         wrap_comments.setEndIconOnClickListener { view ->
             view.context.hideKeyboard(view)
             viewModel.handleClearComment()
-//            et_comment.text = null
-//            et_comment.clearFocus()
+        }
+
+        refresh.setOnRefreshListener {
+            viewModel.refresh()
         }
 
         with(rv_comments) {
@@ -217,7 +223,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         }
 
         viewModel.observeList(viewLifecycleOwner) { commentsAdapter.submitList(it) }
-
     }
 
     override fun onDestroyView() {
@@ -318,15 +323,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     }
 
     inner class ArticleBinding : Binding() {
+        private val mb = MarkdownBuilder(requireContext())
         var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
 
-        private val markdownBuilder = MarkdownBuilder(requireContext())
-
         private var isLoadingContent by RenderProp(false) {
-            Log.e("ArticleFragment", "content is loading: $it");
             tv_text_content.isLoading = it
-            if (it) setupCopyListener()
+            if (!it) setupCopyListener()
         }
         private var isLike: Boolean by RenderProp(false) { bottombar.btn_like.isChecked = it }
         private var isBookmark: Boolean by RenderProp(false) {
@@ -389,38 +392,26 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isBlank() && et_comment.hasFocus()) et_comment.clearFocus()
         }
 
-        private var source by RenderProp(""){
-            tv_source.isVisible = it.isNotEmpty()
-            if (it.isEmpty())
-                return@RenderProp;
+        private var hashtags: List<String> by RenderProp(emptyList()) {
 
-            markdownBuilder.markdownToSpan(
-                MarkdownElement.Text(
-                    mutableListOf(Element.Link(it, "Article source"))
-                )
-            ).also { spanned ->
-                tv_source.setText(spanned, TextView.BufferType.SPANNABLE)
+            val tags = buildSpannedString {
+                it.forEach { tag ->
+                    mb.buildElement(
+                        Element.InlineCode(
+                            tag
+                        ), this
+                    )
+                    append(" ")
+                }
             }
-
+            tv_hashtags.setText(tags, TextView.BufferType.SPANNABLE)
         }
 
-        private var tags: List<String> by RenderProp(emptyList()) {
-            tv_hashtags.isVisible = it.isNotEmpty()
-            if (it.isEmpty())
-                return@RenderProp
-
-            markdownBuilder
-                .markdownToSpan(
-                    MarkdownElement.Text(
-                        it.flatMap { tag ->
-                            listOf(Element.InlineCode(tag), Element.Text(" "))
-                        }.toMutableList()
-                    )
-                )
-                .also { spannedString ->
-                    tv_hashtags.setText(spannedString, TextView.BufferType.SPANNABLE)
-                }
-
+        private var source: String by RenderProp("") {link ->
+            val s = buildSpannedString {
+                mb.buildElement(Element.Link(link, "Article source"), this)
+            }
+            tv_source.setText(s, TextView.BufferType.SPANNABLE)
         }
 
         override val afterInflated: (() -> Unit)? = {
@@ -459,9 +450,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottomBar
             comment = data.commentText ?: ""
-            source = data.source ?: ""
-            tags = data.tags
-
+            hashtags = data.hashtags
+            if (data.source != null) source = data.source
         }
 
         override fun saveUi(outState: Bundle) {

@@ -2,19 +2,17 @@ package ru.skillbranch.skillarticles
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import ru.skillbranch.skillarticles.data.local.PrefManager
-
-//import com.facebook.stetho.Stetho
+import ru.skillbranch.skillarticles.data.remote.NetworkMonitor
 
 class App : Application() {
 
-    companion object{
-        private var instance : App? = null
+    companion object {
+        private var instance: App? = null
 
-        fun applicationContext() : Context{
-            return  instance!!.applicationContext
+        fun applicationContext(): Context {
+            return instance!!.applicationContext
         }
     }
 
@@ -25,11 +23,15 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-//        val isNight =  PrefManager.getAppSettings().value?.isDarkMode ?: false
-//        AppCompatDelegate.setDefaultNightMode(if (isNight) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
-//        Log.e("App", "Night mode: $isNight")
+        //start network monitoring
+        NetworkMonitor.registerNetworkMonitor(applicationContext)
+
+        //set saved night/day mode
+        val mode = if (PrefManager.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+        else AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(mode)
+
 //        Stetho.initializeWithDefaults(this)
 
     }
-
 }

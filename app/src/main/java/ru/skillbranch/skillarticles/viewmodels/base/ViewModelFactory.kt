@@ -16,7 +16,6 @@ class ViewModelFactory(
     private val params: Any
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
 
-
     override fun <T : ViewModel?> create(
         key: String,
         modelClass: Class<T>,
