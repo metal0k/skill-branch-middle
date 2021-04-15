@@ -1,11 +1,35 @@
 package ru.skillbranch.skillarticles.data.repositories
 
 import androidx.lifecycle.LiveData
+import okhttp3.MultipartBody
 import ru.skillbranch.skillarticles.data.local.PrefManager
 import ru.skillbranch.skillarticles.data.models.User
+import ru.skillbranch.skillarticles.data.remote.NetworkManager
+import ru.skillbranch.skillarticles.data.remote.req.EditProfileReq
 
-object ProfileRepository {
+interface IProfileRepository {
+    fun getProfile(): LiveData<User?>
+    suspend fun uploadAvatar(body: MultipartBody.Part)
+    suspend fun removeAvatar()
+    suspend fun editProfile(name: String, about: String)
+}
+
+object ProfileRepository : IProfileRepository {
     private val prefs = PrefManager
+    private val network = NetworkManager.api
 
-    fun getProfile(): LiveData<User?> = prefs.profileLive
+    override fun getProfile(): LiveData<User?> = prefs.profileLive
+
+    override suspend fun uploadAvatar(body: MultipartBody.Part) {
+        val (url) = network.upload(body, prefs.accessToken)
+        prefs.profile = prefs.profile!!.copy(avatar = url)
+    }
+
+    override suspend fun removeAvatar() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun editProfile(name: String, about: String) {
+        TODO("Not yet implemented")
+    }
 }

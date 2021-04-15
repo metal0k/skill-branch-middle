@@ -3,18 +3,21 @@ package ru.skillbranch.skillarticles.ui.dialogs
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
-import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
 class ChoseCategoryDialog : DialogFragment() {
-    private val viewModel: ArticlesViewModel by activityViewModels()
+    companion object{
+        const val CHOOSE_CATEGORY_KEY = "CHOOSE_CATEGORY_KEY"
+        const val SELECTED_CATEGORIES = "SELECTED_CATEGORIES"
+    }
     private val selected = mutableSetOf<String>()
     private val args: ChoseCategoryDialogArgs by navArgs()
 
@@ -44,10 +47,10 @@ class ChoseCategoryDialog : DialogFragment() {
         return AlertDialog.Builder(requireContext())
             .setTitle("Chose category")
             .setPositiveButton("Apply") { _, _ ->
-                viewModel.applyCategories(selected.toList())
+                setFragmentResult(CHOOSE_CATEGORY_KEY, bundleOf(SELECTED_CATEGORIES to selected.toList()))
             }
             .setNegativeButton("Reset") { _, _ ->
-                viewModel.applyCategories(emptyList())
+                setFragmentResult(CHOOSE_CATEGORY_KEY, bundleOf(SELECTED_CATEGORIES to emptyList<String>()))
             }
             .setView(rvCategories)
             .create()
