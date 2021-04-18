@@ -33,7 +33,7 @@ class PrefLiveObjDelegate<T>(
     override fun getValue(thisRef: Any?, property: KProperty<*>): LiveData<T?> {
         if (storedValue == null) {
             storedValue = SharedPreferencesLiveData(preferences, fieldKey, "").map {
-                return@map adapter.fromJson(it)
+                return@map if(it.isNotBlank()) adapter.fromJson(it) else null
             }
         }
         return storedValue!!

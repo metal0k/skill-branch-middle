@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_nav_profile_to_dialog_avatar_actions"
             app:destination="@id/dialog_avatar_actions" />
+        <action
+            android:id="@+id/action_nav_profile_to_dialog_edit_profile"
+            app:destination="@id/dialog_edit_profile" />
     </fragment>
     <fragment
         android:id="@+id/nav_bookmarks"
@@ -131,6 +134,17 @@
         <argument
             android:name="has_avatar"
             app:argType="boolean" />
+    </dialog>
+    <dialog
+        android:id="@+id/dialog_edit_profile"
+        android:name="ru.skillbranch.skillarticles.ui.dialogs.EditProfileDialog"
+         >
+        <argument
+            android:name="profile_name"
+            app:argType="string" />
+        <argument
+            android:name="profile_about"
+            app:argType="string" />
     </dialog>
 
 </navigation>

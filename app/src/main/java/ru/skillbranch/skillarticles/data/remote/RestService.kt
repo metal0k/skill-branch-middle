@@ -90,4 +90,16 @@ interface RestService {
         @Header("Authorization") token: String
     ): UploadRes
 
+
+    @PUT("profile/avatar/remove")
+    suspend fun removeAvatar(
+        @Header("Authorization") token: String
+    )
+
+    @PUT("profile")
+    suspend fun editProfile(
+        @Body editProfileReq: EditProfileReq,
+        @Header("Authorization") token: String
+    )
+
 }

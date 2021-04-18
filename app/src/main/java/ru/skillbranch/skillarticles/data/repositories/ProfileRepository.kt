@@ -26,10 +26,18 @@ object ProfileRepository : IProfileRepository {
     }
 
     override suspend fun removeAvatar() {
-        TODO("Not yet implemented")
+        network.removeAvatar(prefs.accessToken)
+        prefs.profile = prefs.profile!!.copy(avatar = "")
     }
 
     override suspend fun editProfile(name: String, about: String) {
-        TODO("Not yet implemented")
+        network.editProfile(EditProfileReq(name, about), prefs.accessToken)
+        prefs.profile = prefs.profile!!.copy(name = name, about = about)
+    }
+
+    fun logout() {
+        prefs.profile = null
+        prefs.accessToken = ""
+        prefs.refreshToken = ""
     }
 }

@@ -114,7 +114,9 @@ class ProfileViewModel(handle: SavedStateHandle) :
     }
 
     fun handleDeleteAction() {
-        //TODO remove avatar on server
+        launchSafety {
+            repository.removeAvatar();
+        }
     }
 
     fun handleGalleryAction() {
@@ -125,6 +127,15 @@ class ProfileViewModel(handle: SavedStateHandle) :
     fun handleCameraAction(destination: Uri) {
         updateState { it.copy(pendingAction = PendingAction.CameraAction(destination)) }
         requestPermissions(storagePermissions)
+    }
+
+    fun handleEditProfile(name: String, about: String) {
+        launchSafety { repository.editProfile(name, about) }
+    }
+
+    fun handleLogout() {
+        repository.logout()
+        navigate(NavigationCommand.Logout)
     }
 }
 

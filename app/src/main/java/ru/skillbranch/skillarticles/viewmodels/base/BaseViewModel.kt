@@ -246,6 +246,8 @@ sealed class NavigationCommand() {
     data class FinishLogin(
         val privateDestination: Int? = null
     ) : NavigationCommand()
+
+    object Logout: NavigationCommand()
 }
 
 enum class Loading {

@@ -29,8 +29,11 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.RootActivity
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
+import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
+import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.ui.dialogs.AvatarActionsDialog
+import ru.skillbranch.skillarticles.ui.dialogs.EditProfileDialog
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.profile.PendingAction
@@ -75,6 +78,28 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     lateinit var settingsLauncher: ActivityResultLauncher<Intent>
 
+    override val prepareToolbar: (ToolbarBuilder.() -> Unit)? = {
+        addMenuItem(
+            MenuItemHolder(
+                "edit",
+                R.id.action_edit,
+                R.drawable.ic_edit_24
+            ) {
+                val action = ProfileFragmentDirections
+                    .actionNavProfileToDialogEditProfile(binding.name, binding.about)
+                viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
+            }
+        )
+        addMenuItem(
+            MenuItemHolder(
+                "logout",
+                R.id.action_logout,
+                R.drawable.ic_logout_24
+            ) {
+                viewModel.handleLogout()
+            }
+        )
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -116,6 +141,14 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
             }
 
         }
+        setFragmentResultListener(EditProfileDialog.EDIT_PROFILE_KEY) { _, bundle ->
+            viewModel.handleEditProfile(
+                bundle.getString(EditProfileDialog.EDIT_NAME_VALUE) ?: "",
+                bundle.getString(EditProfileDialog.EDIT_ABOUT_VALUE) ?: ""
+            )
+
+        }
+        setHasOptionsMenu(true)
     }
     
     override fun setupViews() {

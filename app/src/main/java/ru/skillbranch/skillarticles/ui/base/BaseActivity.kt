@@ -86,6 +86,12 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
                     bundleOf("private_destination" to (command.privateDestination ?: -1))
                 )
             }
+
+            is NavigationCommand.Logout -> {
+                do {
+                    val result = navController.popBackStack(R.id.nav_profile, true)
+                } while (result)
+            }
         }
     }
 
