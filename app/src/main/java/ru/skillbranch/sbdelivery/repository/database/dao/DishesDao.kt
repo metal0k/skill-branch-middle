@@ -16,6 +16,6 @@ interface DishesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertDishes(dishes: List<DishPersistEntity>)
 
-    @Query("SELECT * FROM dishes_table WHERE name LIKE name LIKE '%' || :searchText || '%' ORDER BY name ASC")
+    @Query("SELECT * FROM dishes_table WHERE name LIKE '%' || :searchText || '%' ORDER BY name ASC")
     fun findDishesByName(searchText: String): Flowable<List<DishPersistEntity>>
 }
