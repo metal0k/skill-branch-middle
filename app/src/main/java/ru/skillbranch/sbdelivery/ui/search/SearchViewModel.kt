@@ -14,16 +14,19 @@ class SearchViewModel(
     private val mapper: DishesMapper
 ) : BaseViewModel() {
     private val action = MutableLiveData<SearchState>()
+    private val defaultState = SearchState.Loading
     val state: LiveData<SearchState>
         get() = action
 
     fun initState() {
         useCase.getDishes()
+            .doOnSubscribe { action.postValue(defaultState) }
             .map { dishes -> mapper.mapDtoToState(dishes) }
             .subscribe({
-                val newState = SearchState(it)
+                val newState = SearchState.Result(it)
                 action.value = newState
             }, {
+                action.value = SearchState.Error(it.message ?: "")
                 it.printStackTrace()
             }).track()
     }
@@ -32,13 +35,20 @@ class SearchViewModel(
         searchEvent
             .debounce(800L, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
+            .doOnNext { action.postValue(SearchState.Loading) }
+            .delay(2000L, TimeUnit.MILLISECONDS)
             .switchMap { useCase.findDishesByName(it) }
             .map { mapper.mapDtoToState(it) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                val newState = SearchState(it)
+                val newState = if (it.isEmpty()) {
+                    SearchState.Error("Товар не найден", true)
+                } else {
+                    SearchState.Result(it)
+                }
                 action.value = newState
             }, {
+                action.value = SearchState.Error(it.message ?: "")
                 it.printStackTrace()
             }).track()
 

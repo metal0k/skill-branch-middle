@@ -20,7 +20,11 @@ class BasketFragment : Fragment() {
     private var _binding: FragmentBasketBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentBasketBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -30,7 +34,8 @@ class BasketFragment : Fragment() {
         notifier.eventSubscribe()
             .subscribe {
                 if (it is BasketEvent.AddDish) {
-                    binding.tvDishes.text = "${binding.tvDishes.text}\n\n ${it.title} стоимость ${it.price}"
+                    binding.tvDishes.text =
+                        "${binding.tvDishes.text}\n\n ${it.title} стоимость ${it.price}"
                 }
 
             }

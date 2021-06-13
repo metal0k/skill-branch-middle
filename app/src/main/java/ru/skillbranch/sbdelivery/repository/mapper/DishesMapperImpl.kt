@@ -18,7 +18,15 @@ open class DishesMapperImpl : DishesMapper {
         }
 
     override fun mapDtoToEntity(dishesDto: List<Dish>): List<DishEntity> =
-        dishesDto.map { DishEntity(it.id ?: "", it.category ?: "", it.image ?: "", "${it.price} ₽", it.name ?: "") }
+        dishesDto.map {
+            DishEntity(
+                it.id ?: "",
+                it.category ?: "",
+                it.image ?: "",
+                "${it.price} ₽",
+                it.name ?: ""
+            )
+        }
 
     override fun mapDtoToPersist(dishesDto: List<Dish>): List<DishPersistEntity> =
         dishesDto.map {

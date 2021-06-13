@@ -14,6 +14,10 @@ abstract class SBDeliveryRoomDatabase : RoomDatabase() {
 
 object DatabaseProvider {
     fun newInstance(context: Context): SBDeliveryRoomDatabase =
-        Room.databaseBuilder(context.applicationContext, SBDeliveryRoomDatabase::class.java, "sa_test_database")
+        Room.databaseBuilder(
+            context.applicationContext,
+            SBDeliveryRoomDatabase::class.java,
+            "sa_test_database"
+        )
             .build()
 }

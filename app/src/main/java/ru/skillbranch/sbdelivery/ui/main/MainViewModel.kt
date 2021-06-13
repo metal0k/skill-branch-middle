@@ -6,6 +6,7 @@ import ru.skillbranch.sbdelivery.core.BaseViewModel
 import ru.skillbranch.sbdelivery.core.adapter.ProductItemState
 import ru.skillbranch.sbdelivery.core.notifier.BasketNotifier
 import ru.skillbranch.sbdelivery.core.notifier.event.BasketEvent
+import ru.skillbranch.sbdelivery.domain.filter.CategoriesFilter
 import ru.skillbranch.sbdelivery.repository.DishesRepositoryContract
 import ru.skillbranch.sbdelivery.repository.error.EmptyDishesError
 import ru.skillbranch.sbdelivery.repository.mapper.CategoriesMapper
@@ -15,7 +16,8 @@ class MainViewModel(
     private val repository: DishesRepositoryContract,
     private val dishesMapper: DishesMapper,
     private val categoriesMapper: CategoriesMapper,
-    private val notifier: BasketNotifier
+    private val notifier: BasketNotifier,
+    private val filterUseCase: CategoriesFilter
 ) : BaseViewModel() {
 
     private val defaultState = MainState.Loader
@@ -27,8 +29,8 @@ class MainViewModel(
         loadDishes()
     }
 
-    fun loadDishes() {
-        repository.getDishes()
+    fun loadDishes(categoryId: String? = null) {
+        getDishesList(categoryId)
             .doOnSubscribe { action.value = defaultState }
             .flatMap { dishes -> repository.getCategories().map { it to dishes } }
             .map { categoriesMapper.mapDtoToState(it.first) to dishesMapper.mapDtoToState(it.second) }
@@ -44,6 +46,10 @@ class MainViewModel(
                 it.printStackTrace()
             }).track()
     }
+
+    private fun getDishesList(categoryId: String? = null) =
+        if (categoryId.isNullOrEmpty()) repository.getDishes()
+        else filterUseCase.categoryFilterDishes(categoryId)
 
     fun handleAddBasket(item: ProductItemState) {
         notifier.putDishes(BasketEvent.AddDish(item.id, item.title, item.price))

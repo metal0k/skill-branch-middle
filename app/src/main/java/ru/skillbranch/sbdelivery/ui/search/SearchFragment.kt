@@ -25,7 +25,11 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,14 +40,26 @@ class SearchFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner, ::renderState)
         binding.rvProductGrid.adapter = adapter
         binding.rvProductGrid.addItemDecoration(GridPaddingItemDecoration(17))
-        val searchEvent = binding.searchInput.queryTextChanges().skipInitialValue().map { it.toString() }
+        val searchEvent =
+            binding.searchInput.queryTextChanges().skipInitialValue().map { it.toString() }
+        binding
         viewModel.setSearchEvent(searchEvent)
     }
 
     private fun renderState(searchState: SearchState) {
-        adapter.items = searchState.items
-        adapter.notifyDataSetChanged()
-
+        when (searchState) {
+            is SearchState.Result -> {
+                adapter.items = searchState.items
+                adapter.notifyDataSetChanged()
+            }
+            is SearchState.Loading -> {
+                //TODO
+            }
+            is SearchState.Error -> {
+                adapter.items = emptyList()
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onDestroyView() {

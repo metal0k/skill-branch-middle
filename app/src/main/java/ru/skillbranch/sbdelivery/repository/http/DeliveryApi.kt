@@ -27,6 +27,4 @@ interface DeliveryApi {
         @Query("limit") limit: Int,
         @Header("Authorization") token: String
     ): Single<List<Category>>
-
-
 }

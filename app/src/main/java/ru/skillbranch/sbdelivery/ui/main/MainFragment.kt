@@ -33,11 +33,15 @@ class MainFragment : Fragment() {
 
     private val categoriesAdapter by lazy {
         CategoriesDelegate().createAdapter {
-            // TODO handle click
+            viewModel.loadDishes(it.categoryId)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -22,7 +22,13 @@ class DishesRepository(
 
     override fun getDishes(): Single<List<DishEntity>> =
         api.refreshToken(RefreshToken(DeliveryRetrofitProvider.REFRESH_TOKEN))
-            .flatMap { api.getDishes(0, 1000, "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}") }
+            .flatMap {
+                api.getDishes(
+                    0,
+                    1000,
+                    "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}"
+                )
+            }
             .doOnSuccess { dishes: List<Dish> ->
                 val savePersistDishes: List<DishPersistEntity> = mapper.mapDtoToPersist(dishes)
                 dishesDao.insertDishes(savePersistDishes)
@@ -40,12 +46,21 @@ class DishesRepository(
 
     override fun getCategories(): Single<List<Category>> {
         return api.refreshToken(RefreshToken(DeliveryRetrofitProvider.REFRESH_TOKEN))
-            .flatMap { api.getCategories(0, 1000, "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}") }
+            .flatMap {
+                api.getCategories(
+                    0,
+                    1000,
+                    "${DeliveryRetrofitProvider.BEARER} ${it.accessToken}"
+                )
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun findDishesByName(searchText: String): Observable<List<DishEntity>> {
-        return TODO("Сделать поиск через дао")
+        return dishesDao.findDishesByName(searchText).map { mapper.mapPersistToEntity(it) }
+            .toObservable()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }

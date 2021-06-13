@@ -61,6 +61,7 @@ class BasketNotifierImplTest {
         notifier.eventSubscribe().test()
             .assertNotComplete()
         Assertions.assertThat(notifier.eventSubscribe().test().values()).isEqualTo(listTestEvent)
-        Assertions.assertThat(notifier.eventSubscribe().test().values().size).isEqualTo(listTestEvent.size)
+        Assertions.assertThat(notifier.eventSubscribe().test().values().size)
+            .isEqualTo(listTestEvent.size)
     }
 }
