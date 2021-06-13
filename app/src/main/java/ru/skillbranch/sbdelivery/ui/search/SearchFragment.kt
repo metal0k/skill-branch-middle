@@ -42,7 +42,6 @@ class SearchFragment : Fragment() {
         binding.rvProductGrid.addItemDecoration(GridPaddingItemDecoration(17))
         val searchEvent =
             binding.searchInput.queryTextChanges().skipInitialValue().map { it.toString() }
-        binding
         viewModel.setSearchEvent(searchEvent)
     }
 
