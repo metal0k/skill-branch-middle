@@ -53,12 +53,11 @@ class DishesRepository @Inject constructor(
 
     override suspend fun findSuggestions(query: String): Map<String, Int> {
         var dishesList = searchDishes(query);
-        var res = dishesList
-            .map{it.title.replace("[.,!?\"]".toRegex(), "").split(" ")}
+        return dishesList
+            .map{it.title.replace("[.,!?\"-]".toRegex(), "").toLowerCase().split(" ")}
             .flatten().
             filter { it.contains(query, true) }
             .groupingBy { it }.eachCount();
-        return res;
     }
 
     override suspend fun addDishToCart(id: String) {
