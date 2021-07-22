@@ -19,7 +19,8 @@ object DishFeature {
         val reviews: ReviewUiState = ReviewUiState.Loading,
         val content: DishUiState = DishUiState.Loading,
         val count: Int = 1,
-        val rating: Float = 0f
+        val rating: Float = 0f,
+        val isLiked: Boolean = false,
     ): Serializable
 
     sealed class Eff {
@@ -27,6 +28,7 @@ object DishFeature {
         data class LoadReviews(val dishId: String) : Eff()
         data class AddToCart(val id: String, val count: Int) : Eff()
         data class SendReview(val id: String, val rating: Int, val review: String) : Eff()
+        data class SetLike(val id: String, val isLike: Boolean): Eff()
         object Terminate: Eff()
     }
 

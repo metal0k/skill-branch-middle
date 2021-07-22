@@ -16,10 +16,12 @@ fun DishFeature.State.selfReduce(msg: DishFeature.Msg) : Pair<DishFeature.State,
         is DishFeature.Msg.ShowDish -> copy(content = DishUiState.Value(msg.dish)) to emptySet()
         is DishFeature.Msg.ShowReviewDialog -> TODO()
         is DishFeature.Msg.ShowReviews -> copy(reviews = ReviewUiState.Value(msg.reviews)) to emptySet()
-        is DishFeature.Msg.ToggleLike -> TODO()
+        is DishFeature.Msg.ToggleLike -> copy(isLiked = !isLiked) to setOf(DishFeature.Eff.SetLike(id, isLiked)).toEffs()
     }
 
 fun  DishFeature.State.reduce(root: RootState, msg: DishFeature.Msg) : Pair<RootState, Set<Eff>> {
     val (screenState, effs) = selfReduce(msg)
     return root.changeCurrentScreen<ScreenState.Dish> { copy(state = screenState) } to effs
 }
+
+private fun Set<DishFeature.Eff>.toEffs(): Set<Eff> = mapTo(HashSet(), Eff::Dish)

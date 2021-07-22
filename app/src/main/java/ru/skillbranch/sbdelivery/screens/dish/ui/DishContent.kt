@@ -27,10 +27,10 @@ import ru.skillbranch.sbdelivery.screens.dish.data.DishContent
 import ru.skillbranch.sbdelivery.screens.root.ui.AppTheme
 
 @Composable
-fun DishContent(dish: DishContent, count: Int, accept: (DishFeature.Msg) -> Unit) {
+fun DishContent(dish: DishContent, count: Int, isLiked: Boolean, accept: (DishFeature.Msg) -> Unit) {
     ConstraintLayout {
 
-        val (title, poster, description, price, addBtn) = createRefs()
+        val (title, poster, likeBtn, description, price, addBtn) = createRefs()
 
         CoilImage(
             data = dish.image,
@@ -66,6 +66,31 @@ fun DishContent(dish: DishContent, count: Int, accept: (DishFeature.Msg) -> Unit
                     end.linkTo(parent.end)
                 }
         )
+
+        IconButton(
+            onClick = { accept(DishFeature.Msg.ToggleLike) },
+            content = {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colors.secondary,
+                    painter = painterResource( if (isLiked) R.drawable.ic_baseline_star_24 else R.drawable.ic_baseline_star_border_24),
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .width(30.dp)
+                .height(30.dp)
+                .border(
+                    0.dp,
+                    MaterialTheme.colors.onBackground
+                )
+                .constrainAs(likeBtn) {
+                    top.linkTo(poster.top, margin = 16.dp)
+                    end.linkTo(parent.end, margin = 16.dp)
+                }
+               .clipToBounds()
+        )
+
         Text(
             fontSize = 24.sp,
             color = MaterialTheme.colors.onPrimary,
@@ -99,8 +124,8 @@ fun DishContent(dish: DishContent, count: Int, accept: (DishFeature.Msg) -> Unit
 
         DishPrice(price = dish.price, oldPrice = dish.oldPrice,
             count = count,
-            onIncrement = { /*TODO*/ },
-            onDecrement = { /*TODO*/ },
+            onIncrement = { accept(DishFeature.Msg.IncrementCount) },
+            onDecrement = { accept(DishFeature.Msg.DecrementCount) },
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .constrainAs(price) {
@@ -270,6 +295,7 @@ fun ContentPreview() {
                 100,
                 200
             ),
+            isLiked = false,
             count = 5
         ) {}
     }

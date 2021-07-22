@@ -39,6 +39,9 @@ class DishEffHandler @Inject constructor(
                     }
                 }
                 is DishFeature.Eff.SendReview -> TODO()
+                is DishFeature.Eff.SetLike -> {
+                    repository.setLike(effect.id, effect.isLike);
+                }
                 is DishFeature.Eff.Terminate -> {
                     localJob?.cancel("Terminate coroutine scope")
                     localJob = null

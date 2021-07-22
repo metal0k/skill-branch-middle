@@ -15,6 +15,7 @@ interface IDishRepository {
     suspend fun cartCount(): Int
     suspend fun loadReviews(dishId: String): List<ReviewRes>
     suspend fun sendReview(id: String, rating: Int, review: String): ReviewRes
+    suspend fun setLike(id: String, like: Boolean)
 }
 
 class DishRepository @Inject constructor(
@@ -40,7 +41,10 @@ class DishRepository @Inject constructor(
             emptyList()
     }
 
-    override suspend fun sendReview(id: String, rating: Int, review: String): ReviewRes {
+    override suspend fun sendReview(dishId: String, rating: Int, review: String): ReviewRes {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun setLike(dishId: String, like: Boolean) {
     }
 }
