@@ -33,8 +33,11 @@ class DishRepository @Inject constructor(
     }
 
     override suspend fun loadReviews(dishId: String): List<ReviewRes> {
-        //TODO
-        return emptyList()
+        val res = api.getFullReviews(dishId,0, 100)
+        return if (res.isSuccessful)
+            res.body()!!.map{it.toReviewRes()}
+        else
+            emptyList()
     }
 
     override suspend fun sendReview(id: String, rating: Int, review: String): ReviewRes {
