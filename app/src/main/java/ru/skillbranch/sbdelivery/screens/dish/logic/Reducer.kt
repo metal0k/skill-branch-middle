@@ -10,11 +10,11 @@ fun DishFeature.State.selfReduce(msg: DishFeature.Msg) : Pair<DishFeature.State,
     when(msg){
         is DishFeature.Msg.AddToCart -> TODO()
         is DishFeature.Msg.DecrementCount -> copy(count = if (count > 1) count - 1 else count) to emptySet()
-        is DishFeature.Msg.HideReviewDialog -> TODO()
+        is DishFeature.Msg.HideReviewDialog -> copy(isReviewDialog = false) to emptySet()
         is DishFeature.Msg.IncrementCount -> copy(count = count + 1) to emptySet()
         is DishFeature.Msg.SendReview -> TODO()
         is DishFeature.Msg.ShowDish -> copy(content = DishUiState.Value(msg.dish)) to emptySet()
-        is DishFeature.Msg.ShowReviewDialog -> TODO()
+        is DishFeature.Msg.ShowReviewDialog -> copy(isReviewDialog = true) to emptySet()
         is DishFeature.Msg.ShowReviews -> copy(reviews = ReviewUiState.Value(msg.reviews)) to emptySet()
         is DishFeature.Msg.ToggleLike -> copy(isLiked = !isLiked) to setOf(DishFeature.Eff.SetLike(id, isLiked)).toEffs()
     }
