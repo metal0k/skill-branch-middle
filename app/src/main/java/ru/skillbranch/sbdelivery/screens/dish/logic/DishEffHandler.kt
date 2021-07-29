@@ -38,9 +38,16 @@ class DishEffHandler @Inject constructor(
                         notifyChannel.send(Eff.Notification.Error(t.message ?: "something error"))
                     }
                 }
-                is DishFeature.Eff.SendReview -> TODO()
+                is DishFeature.Eff.SendReview -> {
+                    val res = repository.sendReview(
+                        dishId = effect.id,
+                        rating = effect.rating,
+                        review = effect.review
+                    )
+                    notifyChannel.send(Eff.Notification.Text("Отзыв успешно отправлен"))
+                }
                 is DishFeature.Eff.SetLike -> {
-                    repository.setLike(effect.id, effect.isLike);
+                    repository.setLike(effect.id, effect.isLike)
                 }
                 is DishFeature.Eff.Terminate -> {
                     localJob?.cancel("Terminate coroutine scope")

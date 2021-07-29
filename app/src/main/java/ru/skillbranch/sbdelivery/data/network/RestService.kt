@@ -33,6 +33,17 @@ interface RestService {
         @Query("limit") limit: Int
     ): Response<List<FullReviewRes>>
 
+    @POST("reviews/{dishId}")
+    @Headers(
+        "If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT"
+//        , "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDFkMDM2Mjk5YzZhMDAzZTlkZGI5ZiIsImlhdCI6MTYyNzU5MDA2OSwiZXhwIjoxNjI3NTkxMjY5fQ.u8GAAaZkah1G5I4y4U2oULcnfnurAW0f08X0-iiN1pw"
+    )
+    suspend fun sendReview(
+        @Path("dishId") dishId: String,
+        @Body review: ReviewReq,
+//        @Header("Authorization") token: String,
+    ): ReviewRes
+
     @GET("categories")
     @Headers("If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT")
     suspend fun getCategories(

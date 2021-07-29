@@ -42,7 +42,9 @@ class DishRepository @Inject constructor(
     }
 
     override suspend fun sendReview(dishId: String, rating: Int, review: String): ReviewRes {
-        TODO("Not yet implemented")
+        api.sendReview(dishId, ReviewReq(rating, review))
+        return ReviewRes("Name", Date().time, rating, review)
+
     }
 
     override suspend fun setLike(dishId: String, like: Boolean) {
