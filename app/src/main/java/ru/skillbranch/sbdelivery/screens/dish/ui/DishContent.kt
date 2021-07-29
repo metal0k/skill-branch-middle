@@ -135,7 +135,7 @@ fun DishContent(dish: DishContent, count: Int, isLiked: Boolean, accept: (DishFe
                 })
 
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = { accept(DishFeature.Msg.AddToCart(dish.id, count)) },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.secondary,
                 contentColor = MaterialTheme.colors.onSecondary

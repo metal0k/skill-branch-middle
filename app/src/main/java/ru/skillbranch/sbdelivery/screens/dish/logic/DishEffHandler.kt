@@ -25,7 +25,10 @@ class DishEffHandler @Inject constructor(
         if (localJob == null) localJob = Job()
         withContext(localJob!! + dispatcher) {
             when (effect) {
-                is DishFeature.Eff.AddToCart -> TODO()
+                is DishFeature.Eff.AddToCart -> {
+                    repository.addToCart(effect.id, effect.count)
+                    notifyChannel.send(Eff.Notification.Text("В корзмну добавлено ${effect.count} товаров"))
+                }
                 is DishFeature.Eff.LoadDish -> {
                     val dish = repository.findDish(effect.dishId)
                     commit(DishFeature.Msg.ShowDish(dish).toMsg())

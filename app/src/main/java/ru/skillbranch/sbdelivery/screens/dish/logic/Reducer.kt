@@ -8,7 +8,7 @@ import ru.skillbranch.sbdelivery.screens.root.logic.ScreenState
 
 fun DishFeature.State.selfReduce(msg: DishFeature.Msg) : Pair<DishFeature.State, Set<Eff>> =
     when(msg){
-        is DishFeature.Msg.AddToCart -> TODO()
+        is DishFeature.Msg.AddToCart -> this to setOf(DishFeature.Eff.AddToCart(msg.id, msg.count)).toEffs()
         is DishFeature.Msg.DecrementCount -> copy(count = if (count > 1) count - 1 else count) to emptySet()
         is DishFeature.Msg.HideReviewDialog -> copy(isReviewDialog = false) to emptySet()
         is DishFeature.Msg.IncrementCount -> copy(count = count + 1) to emptySet()
