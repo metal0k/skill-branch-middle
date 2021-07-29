@@ -2,11 +2,15 @@ package ru.skillbranch.sbdelivery.repository
 
 import ru.skillbranch.sbdelivery.data.db.dao.CartDao
 import ru.skillbranch.sbdelivery.data.db.dao.DishesDao
+import ru.skillbranch.sbdelivery.data.db.entity.CartItemPersist
 import ru.skillbranch.sbdelivery.data.network.RestService
+import ru.skillbranch.sbdelivery.data.network.req.ReviewReq
 import ru.skillbranch.sbdelivery.data.network.res.ReviewRes
 import ru.skillbranch.sbdelivery.data.toDishContent
+import ru.skillbranch.sbdelivery.data.toReviewRes
 import ru.skillbranch.sbdelivery.screens.dish.data.DishContent
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
 
 interface IDishRepository {
@@ -26,11 +30,11 @@ class DishRepository @Inject constructor(
     override suspend fun findDish(id: String): DishContent = dishesDao.findDish(id).toDishContent()
 
     override suspend fun addToCart(id: String, count: Int) {
-        TODO("Not yet implemented")
+        cartDao.addItem(CartItemPersist(dishId = id, count = count ));
     }
 
     override suspend fun cartCount(): Int {
-        TODO("Not yet implemented")
+        return cartDao.cartCount() ?: 0;
     }
 
     override suspend fun loadReviews(dishId: String): List<ReviewRes> {
