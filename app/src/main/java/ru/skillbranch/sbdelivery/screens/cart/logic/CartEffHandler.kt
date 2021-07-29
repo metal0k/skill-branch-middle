@@ -11,6 +11,7 @@ import javax.inject.Inject
 
 class CartEffHandler @Inject constructor(
     private val repository: CartRepository,
+    private val notifyChannel: Channel<Eff.Notification>,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : IEffHandler<CartFeature.Eff, Msg> {
     override suspend fun handle(effect: CartFeature.Eff, commit: (Msg) -> Unit) {
@@ -35,8 +36,15 @@ class CartEffHandler @Inject constructor(
                 val items = repository.loadItems()
                 commit(CartFeature.Msg.ShowCart(items).toMsg())
             }
-            is CartFeature.Eff.RemoveItem -> TODO()
-            is CartFeature.Eff.SendOrder -> TODO()
+            is CartFeature.Eff.RemoveItem -> {
+                repository.removeItem(effect.dishId)
+                updateCart()
+            }
+            is CartFeature.Eff.SendOrder -> {
+                repository.clearCart()
+                notifyChannel.send(Eff.Notification.Text("Заказ оформлен"))
+                updateCart()
+            }
         }
     }
 
