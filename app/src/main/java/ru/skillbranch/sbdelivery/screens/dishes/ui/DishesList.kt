@@ -1,11 +1,14 @@
 package ru.skillbranch.sbdelivery.screens.dishes.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -15,7 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import dev.chrisbanes.accompanist.coil.CoilImage
+import coil.compose.rememberImagePainter
 import ru.skillbranch.sbdelivery.R
 import ru.skillbranch.sbdelivery.screens.dishes.data.DishItem
 import ru.skillbranch.sbdelivery.screens.root.ui.AppTheme
@@ -36,38 +39,28 @@ fun DishItem(
 
             val (fab, title, poster, price) = createRefs()
 
-            CoilImage(
+            val painter = rememberImagePainter(
                 data = dish.image,
+                builder = {
+                    crossfade(true)
+                    placeholder(R.drawable.img_empty_place_holder)
+                    error(R.drawable.img_empty_place_holder)
+                }
+            )
+            Image(
+                painter  = painter,
                 contentDescription = "My content description",
                 contentScale = ContentScale.Crop,
-                error = {
-                    Icon(
-                        painter = painterResource(R.drawable.img_empty_place_holder),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier
-                            .padding(48.dp)
-                            .fillMaxSize()
-                    )
-                },
-                loading = {
-                    Icon(
-                        painter = painterResource(R.drawable.img_empty_place_holder),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier
-                            .padding(48.dp)
-                            .fillMaxSize()
-                    )
-                },
                 modifier = Modifier
                     .height(160.dp)
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
                     .constrainAs(poster) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
+                    .clip(RoundedCornerShape(8.dp))
             )
             Text(
                 fontSize = 16.sp,

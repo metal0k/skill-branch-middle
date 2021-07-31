@@ -1,7 +1,9 @@
 package ru.skillbranch.sbdelivery.screens.dish.ui
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -20,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import dev.chrisbanes.accompanist.coil.CoilImage
+import coil.compose.rememberImagePainter
 import ru.skillbranch.sbdelivery.R
 import ru.skillbranch.sbdelivery.screens.dish.logic.DishFeature
 import ru.skillbranch.sbdelivery.screens.dish.data.DishContent
@@ -32,39 +34,28 @@ fun DishContent(dish: DishContent, count: Int, isLiked: Boolean, accept: (DishFe
 
         val (title, poster, likeBtn, description, price, addBtn) = createRefs()
 
-        CoilImage(
+        val painter = rememberImagePainter(
             data = dish.image,
+            builder = {
+                crossfade(true)
+                placeholder(R.drawable.img_empty_place_holder)
+                error(R.drawable.img_empty_place_holder)
+            }
+        )
+        Image(
+            painter  = painter,
             contentDescription = "My content description",
             contentScale = ContentScale.Crop,
-            fadeIn = true,
-            error = {
-                Icon(
-                    painter = painterResource(R.drawable.img_empty_place_holder),
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier
-                        .padding(48.dp)
-                        .fillMaxSize()
-                )
-            },
-            loading = {
-                Icon(
-                    painter = painterResource(R.drawable.img_empty_place_holder),
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.secondary,
-                    modifier = Modifier
-                        .padding(48.dp)
-                        .fillMaxSize()
-                )
-            },
             modifier = Modifier
                 .aspectRatio(1.44f)
                 .fillMaxSize()
+//                .clickable { onProductClick(dish.id, dish.title) }
                 .constrainAs(poster) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
+                .clip(RoundedCornerShape(8.dp))
         )
 
         IconButton(
