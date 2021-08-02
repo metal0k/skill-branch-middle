@@ -11,7 +11,7 @@ import java.lang.IllegalStateException
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
-class DishEffHandler @Inject constructor(
+class DishEffectHandler @Inject constructor(
     private val repository: DishRepository,
     private val notifyChannel: Channel<Eff.Notification>,
     private val dispatcher: CoroutineDispatcher  = Dispatchers.Default

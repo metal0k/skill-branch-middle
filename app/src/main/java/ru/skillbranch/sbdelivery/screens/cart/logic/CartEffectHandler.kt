@@ -9,7 +9,7 @@ import ru.skillbranch.sbdelivery.screens.root.logic.IEffHandler
 import ru.skillbranch.sbdelivery.screens.root.logic.Msg
 import javax.inject.Inject
 
-class CartEffHandler @Inject constructor(
+class CartEffectHandler @Inject constructor(
     private val repository: CartRepository,
     private val notifyChannel: Channel<Eff.Notification>,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default

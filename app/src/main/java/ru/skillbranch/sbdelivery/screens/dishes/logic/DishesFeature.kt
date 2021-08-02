@@ -27,7 +27,6 @@ object DishesFeature {
         data class UpdateSuggestionResult( val query:String) : Msg()
         data class ShowSuggestions( val suggestions:Map<String, Int>) : Msg()
         data class SuggestionSelect( val suggestion : String) : Msg()
-
         object SearchToggle: Msg()
         object ShowError: Msg()
         object ShowLoading: Msg()

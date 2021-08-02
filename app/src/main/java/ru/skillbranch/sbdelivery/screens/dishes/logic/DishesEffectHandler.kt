@@ -10,7 +10,7 @@ import ru.skillbranch.sbdelivery.screens.root.logic.IEffHandler
 import ru.skillbranch.sbdelivery.screens.root.logic.Msg
 import javax.inject.Inject
 
-class DishesEffHandler @Inject constructor(
+class DishesEffectHandler @Inject constructor(
     private val repository: DishesRepository,
     private val notifyChannel: Channel<Eff.Notification>,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
