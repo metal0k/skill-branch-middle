@@ -1,6 +1,5 @@
 package ru.skillbranch.sbdelivery.repository
 
-import kotlinx.coroutines.delay
 import ru.skillbranch.sbdelivery.data.db.dao.CartDao
 import ru.skillbranch.sbdelivery.data.db.dao.DishesDao
 import ru.skillbranch.sbdelivery.data.db.entity.CartItemPersist
@@ -9,15 +8,16 @@ import ru.skillbranch.sbdelivery.data.network.res.DishRes
 import ru.skillbranch.sbdelivery.data.toDishItem
 import ru.skillbranch.sbdelivery.data.toDishPersist
 import ru.skillbranch.sbdelivery.screens.dishes.data.DishItem
+import java.util.*
 import javax.inject.Inject
 
 interface IDishesRepository {
-    suspend fun searchDishes(newInput: String): List<DishItem>
+    suspend fun searchDishes(query: String): List<DishItem>
     suspend fun isEmptyDishes(): Boolean
     suspend fun syncDishes()
     suspend fun findDishes(): List<DishItem>
     suspend fun findSuggestions(query: String): Map<String, Int>
-    suspend fun addDishToCart(id: String)
+    suspend fun addDishToCart(dishId: String)
     suspend fun removeDishFromCart(dishId: String)
     suspend fun cartCount(): Int
 }
@@ -52,24 +52,24 @@ class DishesRepository @Inject constructor(
         dishesDao.findAllDishes().map { it.toDishItem() }
 
     override suspend fun findSuggestions(query: String): Map<String, Int> {
-        var dishesList = searchDishes(query);
+        val dishesList = searchDishes(query)
         return dishesList
-            .map{it.title.replace("[.,!?\"-]".toRegex(), "").toLowerCase().split(" ")}
+            .map{ it.title.replace("[.,!?\"-]".toRegex(), "").lowercase(Locale.getDefault()).split(" ")}
             .flatten().
             filter { it.contains(query, true) }
-            .groupingBy { it }.eachCount();
+            .groupingBy { it }.eachCount()
     }
 
-    override suspend fun addDishToCart(id: String) {
-        val count = cartDao.dishCount(id) ?: 0
-        if (count > 0) cartDao.updateItemCount(id, count.inc())
-        else cartDao.addItem(CartItemPersist(dishId = id))
+    override suspend fun addDishToCart(dishId: String) {
+        val count = cartDao.dishCount(dishId) ?: 0
+        if (count > 0) cartDao.updateItemCount(dishId, count.inc())
+        else cartDao.addItem(CartItemPersist(dishId = dishId))
     }
 
-    override suspend fun removeDishFromCart(id: String) {
-        val count = cartDao.dishCount(id) ?: 0
-        if (count > 0) cartDao.decrementItemCount(id)
-        else cartDao.removeItem(id)
+    override suspend fun removeDishFromCart(dishId: String) {
+        val count = cartDao.dishCount(dishId) ?: 0
+        if (count > 0) cartDao.decrementItemCount(dishId)
+        else cartDao.removeItem(dishId)
     }
 
     override suspend fun cartCount(): Int = cartDao.cartCount() ?: 0

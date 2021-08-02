@@ -17,6 +17,13 @@ interface RestService {
         @Query("limit") limit: Int
     ): Response<List<DishRes>>
 
+    @GET("categories")
+    @Headers("If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT")
+    suspend fun getCategories(
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): List<CategoryRes>
+
     @GET("reviews/{dishId}")
     @Headers("If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT")
     suspend fun getReviews(
@@ -41,15 +48,7 @@ interface RestService {
     suspend fun sendReview(
         @Path("dishId") dishId: String,
         @Body review: ReviewReq,
-//        @Header("Authorization") token: String,
     ): ReviewRes
-
-    @GET("categories")
-    @Headers("If-Modified-Since: Mon, 1 Jun 2020 08:00:00 GMT")
-    suspend fun getCategories(
-        @Query("offset") offset: Int,
-        @Query("limit") limit: Int
-    ): List<CategoryRes>
 
 
 }

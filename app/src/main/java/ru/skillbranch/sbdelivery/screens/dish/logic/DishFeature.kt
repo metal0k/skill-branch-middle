@@ -7,7 +7,7 @@ import ru.skillbranch.sbdelivery.screens.dish.data.ReviewUiState
 import java.io.Serializable
 
 object DishFeature {
-    val route = "dish"
+    const val route = "dish"
 
     fun initialState() : State = State("", "")
     fun initialEffects(id:String) : Set<Eff> =  setOf(Eff.LoadDish(id), Eff.LoadReviews(id))
@@ -15,12 +15,12 @@ object DishFeature {
     data class State(
         val id: String,
         val title: String,
+        val isLiked:Boolean=false,
         val isReviewDialog: Boolean = false,
         val reviews: ReviewUiState = ReviewUiState.Loading,
         val content: DishUiState = DishUiState.Loading,
         val count: Int = 1,
-        val rating: Float = 0f,
-        val isLiked: Boolean = false,
+        val rating: Float = 0f
     ): Serializable
 
     sealed class Eff {

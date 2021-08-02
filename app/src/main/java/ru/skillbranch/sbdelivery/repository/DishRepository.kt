@@ -9,7 +9,6 @@ import ru.skillbranch.sbdelivery.data.network.res.ReviewRes
 import ru.skillbranch.sbdelivery.data.toDishContent
 import ru.skillbranch.sbdelivery.data.toReviewRes
 import ru.skillbranch.sbdelivery.screens.dish.data.DishContent
-import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
@@ -45,12 +44,12 @@ class DishRepository @Inject constructor(
             emptyList()
     }
 
-    override suspend fun sendReview(dishId: String, rating: Int, review: String): ReviewRes {
-        api.sendReview(dishId, ReviewReq(rating, review))
+    override suspend fun sendReview(id: String, rating: Int, review: String): ReviewRes {
+        api.sendReview(id, ReviewReq(rating, review))
         return ReviewRes("Name", Date().time, rating, review)
 
     }
 
-    override suspend fun setLike(dishId: String, like: Boolean) {
+    override suspend fun setLike(id: String, like: Boolean) {
     }
 }

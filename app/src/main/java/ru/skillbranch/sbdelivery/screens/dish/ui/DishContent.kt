@@ -3,7 +3,6 @@ package ru.skillbranch.sbdelivery.screens.dish.ui
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -22,12 +21,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import ru.skillbranch.sbdelivery.R
 import ru.skillbranch.sbdelivery.screens.dish.logic.DishFeature
 import ru.skillbranch.sbdelivery.screens.dish.data.DishContent
 import ru.skillbranch.sbdelivery.screens.root.ui.AppTheme
 
+@ExperimentalCoilApi
 @Composable
 fun DishContent(dish: DishContent, count: Int, isLiked: Boolean, accept: (DishFeature.Msg) -> Unit) {
     ConstraintLayout {
@@ -49,7 +51,6 @@ fun DishContent(dish: DishContent, count: Int, isLiked: Boolean, accept: (DishFe
             modifier = Modifier
                 .aspectRatio(1.44f)
                 .fillMaxSize()
-//                .clickable { onProductClick(dish.id, dish.title) }
                 .constrainAs(poster) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)

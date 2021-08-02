@@ -1,15 +1,12 @@
 package ru.skillbranch.sbdelivery.screens.dish.logic
 
-import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import ru.skillbranch.sbdelivery.repository.DishRepository
 import ru.skillbranch.sbdelivery.screens.root.logic.Eff
 import ru.skillbranch.sbdelivery.screens.root.logic.IEffHandler
 import ru.skillbranch.sbdelivery.screens.root.logic.Msg
-import java.lang.IllegalStateException
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 class DishEffHandler @Inject constructor(
     private val repository: DishRepository,
@@ -43,7 +40,7 @@ class DishEffHandler @Inject constructor(
                 }
                 is DishFeature.Eff.SendReview -> {
                     val res = repository.sendReview(
-                        dishId = effect.id,
+                        id = effect.id,
                         rating = effect.rating,
                         review = effect.review
                     )

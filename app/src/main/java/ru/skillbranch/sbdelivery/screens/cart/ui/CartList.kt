@@ -22,11 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import ru.skillbranch.sbdelivery.R
 import ru.skillbranch.sbdelivery.screens.cart.data.CartItem
 import ru.skillbranch.sbdelivery.screens.root.ui.AppTheme
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun CartListItem(
     dish: CartItem,
@@ -39,6 +42,7 @@ fun CartListItem(
         ConstraintLayout() {
 
             val (title, poster, price, stepper) = createRefs()
+
             val painter = rememberImagePainter(
                 data = dish.image,
                 builder = {
@@ -49,8 +53,8 @@ fun CartListItem(
             )
             Image(
                 painter  = painter,
-                contentDescription = "My content description",
-                contentScale = ContentScale.Crop,
+                contentDescription = dish.title,
+                contentScale = if(painter.state is ImagePainter.State.Success) ContentScale.Crop else ContentScale.Inside,
                 modifier = Modifier
                     .height(80.dp)
                     .aspectRatio(1f)
