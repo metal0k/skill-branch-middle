@@ -1,4 +1,5 @@
 package ru.skillbranch.sbdelivery.screens.root.logic
 
-class IEffectHandler {
+interface IEffectHandler<E, M> {
+    suspend fun handle(effect: E, commit: (M) -> Unit)
 }
