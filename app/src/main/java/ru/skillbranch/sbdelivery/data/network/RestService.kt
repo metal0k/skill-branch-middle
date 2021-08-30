@@ -29,7 +29,7 @@ interface RestService {
     suspend fun getReviews(
         @Path("dishId") dishId: String,
         @Query("offset") offset: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int=10
     ): Response<List<ReviewRes>>
 
     @GET("reviews/{dishId}")

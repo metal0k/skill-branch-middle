@@ -3,6 +3,7 @@ package ru.skillbranch.sbdelivery.screens.dish.logic
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import ru.skillbranch.sbdelivery.repository.DishRepository
+import ru.skillbranch.sbdelivery.screens.cart.logic.CartFeature
 import ru.skillbranch.sbdelivery.screens.root.logic.Eff
 import ru.skillbranch.sbdelivery.screens.root.logic.IEffectHandler
 import ru.skillbranch.sbdelivery.screens.root.logic.Msg
@@ -24,6 +25,8 @@ class DishEffHandler @Inject constructor(
             when (effect) {
                 is DishFeature.Eff.AddToCart -> {
                     repository.addToCart(effect.id, effect.count)
+                    val cartCount = repository.cartCount()
+                    commit(Msg.UpdateCartCount(cartCount))
                     notifyChannel.send(Eff.Notification.Text("В корзмну добавлено ${effect.count} товаров"))
                 }
                 is DishFeature.Eff.LoadDish -> {
@@ -44,6 +47,8 @@ class DishEffHandler @Inject constructor(
                         rating = effect.rating,
                         review = effect.review
                     )
+                    val reviews = repository.loadReviews(effect.id) + res
+                    commit(DishFeature.Msg.ShowReviews(reviews).toMsg())
                     notifyChannel.send(Eff.Notification.Text("Отзыв успешно отправлен"))
                 }
                 is DishFeature.Eff.SetLike -> {

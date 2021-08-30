@@ -42,8 +42,8 @@ class CartEffHandler @Inject constructor(
             }
             is CartFeature.Eff.SendOrder -> {
                 repository.clearCart()
-                notifyChannel.send(Eff.Notification.Text("Заказ оформлен"))
                 updateCart()
+                notifyChannel.send(Eff.Notification.Text("Заказ оформлен"))
             }
         }
     }
