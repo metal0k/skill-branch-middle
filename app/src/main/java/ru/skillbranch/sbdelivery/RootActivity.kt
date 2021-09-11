@@ -40,7 +40,6 @@ class RootActivity : AppCompatActivity() {
                 RootScreen(viewModel)
             }
             BackHandler {
-                Log.e("RootActivity", "onBackpresses")
                 viewModel.navigate(NavCmd.Back)
             }
         }

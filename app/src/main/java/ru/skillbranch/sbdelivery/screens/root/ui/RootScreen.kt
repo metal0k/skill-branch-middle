@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import ru.skillbranch.sbdelivery.screens.cart.ui.CartScreen
 import ru.skillbranch.sbdelivery.screens.components.DefaultToolbar
 import ru.skillbranch.sbdelivery.screens.components.DishesToolbar
+import ru.skillbranch.sbdelivery.screens.components.NavigationDrawer
 import ru.skillbranch.sbdelivery.screens.dish.ui.DishScreen
 import ru.skillbranch.sbdelivery.screens.dishes.ui.DishesScreen
 import ru.skillbranch.sbdelivery.screens.favorites.ui.FavoriteScreen
@@ -45,7 +46,7 @@ fun RootScreen(vm: RootViewModel) {
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            AppbarHost(vm, onToggleDrawer =  {
+            AppbarHost(vm, onToggleDrawer = {
                 val drawerState = scaffoldState.drawerState
                 if (drawerState.isOpen) scope.launch { drawerState.close() }
                 else scope.launch { drawerState.open() }
@@ -53,7 +54,17 @@ fun RootScreen(vm: RootViewModel) {
         },
         content = { ContentHost(vm) },
         drawerContent = {
-
+            val state = vm.state.collectAsState().value
+            NavigationDrawer(
+                currentRoute = state.currentRoute,
+                cartCount = state.cartCount,
+                notificationCount = state.notificationCount,
+//                user = state.user,
+            ) { route ->
+                if(state.currentRoute == route) return@NavigationDrawer
+                vm.navigate(NavCmd.To(route))
+                scope.launch { scaffoldState.drawerState.close() }
+            }
         },
         drawerScrimColor = MaterialTheme.colors.primaryVariant.copy(alpha = DrawerDefaults.ScrimOpacity),
         snackbarHost = { host ->
@@ -113,7 +124,8 @@ private suspend fun renderNotification(
             when (notification) {
                 is Eff.Notification.Error -> notification.action?.let(vm::accept)
                 is Eff.Notification.Action -> vm.accept(notification.action)
-                else -> { /*  no action needed */ }
+                else -> { /*  no action needed */
+                }
             }
         }
         SnackbarResult.Dismissed -> {
@@ -185,25 +197,29 @@ fun AppbarHost(vm: RootViewModel, onToggleDrawer: () -> Unit) {
     val state: RootState by vm.state.collectAsState()
     when (val screen: ScreenState = state.current) {
         is ScreenState.Dishes -> DishesToolbar(
-            title=screen.title,
+            title = screen.title,
             state = screen.state,
             cartCount = state.cartCount,
+            canBack = true,
             accept = { vm.accept(Msg.Dishes(it)) },
-            onCart = { vm.navigate(NavCmd.ToCart) }
+            onCart = { vm.navigate(NavCmd.ToCart) },
+            onDrawer = onToggleDrawer
         )
 
         is ScreenState.Favorites -> DishesToolbar(
-            title=screen.title,
+            title = screen.title,
             state = screen.state,
+            canBack = false,
             cartCount = state.cartCount,
             accept = { vm.accept(Msg.Dishes(it)) },
-            onCart = { vm.navigate(NavCmd.ToCart) }
+            onCart = { vm.navigate(NavCmd.ToCart) },
+            onDrawer = onToggleDrawer
         )
 
         is ScreenState.Menu -> DefaultToolbar(
             screen.title,
             state.cartCount,
-            canBack = screen.state.parent!=null,
+            canBack = screen.state.parent != null,
             onCart = { vm.navigate(NavCmd.ToCart) },
             onDrawer = onToggleDrawer
         )

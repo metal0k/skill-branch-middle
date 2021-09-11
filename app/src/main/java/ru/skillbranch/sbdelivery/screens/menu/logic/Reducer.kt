@@ -18,9 +18,9 @@ fun MenuFeature.State.reduce(
 fun MenuFeature.State.selfReduce(msg: MenuFeature.Msg): Pair<MenuFeature.State, Set<Eff>> =
     when (msg) {
         is MenuFeature.Msg.ClickCategory -> {
-            val nextParent = categories.find { it.parentId == msg.id }
-            if(nextParent == null) copy() to setOf(Eff.Nav(NavCmd.ToCategory(msg.id, msg.title)))
-            else copy(parentId = msg.id) to emptySet()
+            val nextParent = categories.find { it.parentId == msg.id } //if has child category level
+            if(nextParent == null) copy() to setOf(Eff.Nav(NavCmd.ToCategory(msg.id, msg.title))) //if not has child level then open category
+            else copy(parentId = msg.id) to emptySet() //else has child subcategory then update current
         }
         MenuFeature.Msg.PopCategory -> {
             copy(parentId = parent?.parentId) to emptySet()

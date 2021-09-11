@@ -54,6 +54,7 @@ class HomeEffHandler @Inject constructor(
                     } else {
                         val dishes = repository.findRecommended(ids)
 
+                        //async sync recommended if need
                         launch {
                             dishes
                                 .take(1)
@@ -64,6 +65,7 @@ class HomeEffHandler @Inject constructor(
                                 .collect{ repository.syncRecommended(it).asFlow() }
                         }
 
+                        //show recommended
                         launch {
                             dishes
                                 .distinctUntilChanged()

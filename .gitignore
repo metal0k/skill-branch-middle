@@ -12,3 +12,10 @@
 /captures
 .externalNativeBuild
 .cxx
+local.properties
+.idea/
+.tmp/
+caches/
+wrapper/
+native/
+daemon/

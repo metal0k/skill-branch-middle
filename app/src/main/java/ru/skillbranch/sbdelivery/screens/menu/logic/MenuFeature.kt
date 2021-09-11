@@ -19,11 +19,11 @@ object MenuFeature {
 
         val current: List<CategoryItem>
             get() {
-                val cats = categories.filter { it.parentId == parentId }
+                val cats = categories.filter { it.parentId == parentId } //if parentId null return top level categories
 
                 return parent?.icon
-                    ?.let { cats.map { c -> c.copy(icon = it) } }
-                    ?: cats
+                    ?.let { cats.map { c -> c.copy(icon = it) } } //if child icon == null set parent icon
+                    ?: cats //if parent null -> return filtered top level categories
             }
     }
 

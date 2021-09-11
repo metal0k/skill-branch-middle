@@ -1,5 +1,6 @@
 package ru.skillbranch.sbdelivery.screens.components
 
+import android.util.Log
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,8 +42,14 @@ import ru.skillbranch.sbdelivery.screens.dishes.logic.DishesState
 import ru.skillbranch.sbdelivery.screens.root.ui.AppTheme
 
 @Composable
-fun DefaultToolbar(title: String, cartCount: Int, canBack:Boolean = false,  onCart: () ->Unit, onDrawer:()->Unit) {
-    val dispatcher =  LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+fun DefaultToolbar(
+    title: String,
+    cartCount: Int,
+    canBack: Boolean = false,
+    onCart: () -> Unit,
+    onDrawer: () -> Unit
+) {
+    val dispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
     TopAppBar(
         title = {
             Text(
@@ -52,7 +59,7 @@ fun DefaultToolbar(title: String, cartCount: Int, canBack:Boolean = false,  onCa
             )
         },
         navigationIcon = {
-            if(!canBack){
+            if (!canBack) {
                 IconButton(
                     onClick = onDrawer,
                     content = {
@@ -62,7 +69,7 @@ fun DefaultToolbar(title: String, cartCount: Int, canBack:Boolean = false,  onCa
                             contentDescription = "home"
                         )
                     })
-            }else{
+            } else {
                 IconButton(
                     onClick = { dispatcher.onBackPressed() },
                     content = {
@@ -114,20 +121,24 @@ fun DishesToolbar(
     title: String,
     state: DishesState,
     cartCount: Int,
+    canBack: Boolean = false,
     accept: (DishesMsg) -> Unit,
-    onCart: () -> Unit
+    onCart: () -> Unit,
+    onDrawer: () -> Unit
 ) {
 
     val scope = rememberCoroutineScope()
     val inputFlow: MutableSharedFlow<String> = remember { MutableSharedFlow() }
 
-    LaunchedEffect(key1 = state.isSearch){
-        scope.launch {
-            inputFlow
-                .debounce(500)
-                .collect { accept(DishesMsg.UpdateSuggestionResult(it)) }
+    LaunchedEffect(key1 = state.isSearch) {
+        if (state.isSearch) {
+            Log.e("Toolbar", "launch collect user input for suggestions")
+            launch {
+                inputFlow
+                    .debounce(500)
+                    .collect { accept(DishesMsg.UpdateSuggestionResult(it)) }
+            }
         }
-
     }
 
 
@@ -137,6 +148,7 @@ fun DishesToolbar(
         isSearch = state.isSearch,
         title = title,
         suggestions = state.suggestions,
+        canBack = canBack,
         onInput = {
             accept(DishesMsg.SearchInput(it))
             scope.launch { inputFlow.emit(it) }
@@ -144,7 +156,8 @@ fun DishesToolbar(
         onSubmit = { accept(DishesMsg.SearchSubmit(it)) },
         onSuggestionClick = { accept(DishesMsg.SuggestionSelect(it)) },
         onSearchToggle = { accept(DishesMsg.SearchToggle) },
-        onCartClick = onCart
+        onCartClick = onCart,
+        onDrawer = onDrawer
     )
 }
 
@@ -155,26 +168,41 @@ fun SearchToolbar(
     input: String,
     cartCount: Int = 0,
     isSearch: Boolean = false,
+    canBack: Boolean = true,
     suggestions: Map<String, Int> = emptyMap(),
     onInput: ((query: String) -> Unit)? = null,
     onSubmit: ((query: String) -> Unit)? = null,
     onSuggestionClick: ((query: String) -> Unit)? = null,
     onSearchToggle: (() -> Unit)? = null,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    onDrawer: () -> Unit
 ) {
-    val dispatcher =  LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+    val dispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
     Column() {
         TopAppBar(
             navigationIcon = {
-                IconButton(
-                    onClick = { dispatcher.onBackPressed() },
-                    content = {
-                        Icon(
-                            tint = MaterialTheme.colors.secondary,
-                            painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
-                            contentDescription = "back"
-                        )
-                    })
+                if (!canBack) {
+                    IconButton(
+                        onClick = onDrawer,
+                        content = {
+                            Icon(
+                                tint = MaterialTheme.colors.secondary,
+                                painter = painterResource(R.drawable.ic_baseline_menu_24),
+                                contentDescription = "menu"
+                            )
+                        })
+                } else {
+                    IconButton(
+                        onClick = { dispatcher.onBackPressed() },
+                        content = {
+                            Icon(
+                                tint = MaterialTheme.colors.secondary,
+                                painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
+                                contentDescription = "back"
+                            )
+                        })
+                }
+
             },
             title = {
                 if (!isSearch) Text(
@@ -318,7 +346,7 @@ private fun CustomSearchField(
 @Composable
 fun IdleToolbarPreview() {
     AppTheme {
-        DishesToolbar("test", DishesState(title =""), 5, {}, {})
+        DishesToolbar("test", DishesState(title = ""), 5, false, {}, {}, {})
     }
 
 }
@@ -328,7 +356,14 @@ fun IdleToolbarPreview() {
 @Composable
 fun SearchToolbarPreview() {
     AppTheme {
-        DishesToolbar("test", DishesState(input = "search test", isSearch = true, title = ""), 0, {}, {})
+        DishesToolbar(
+            "test",
+            DishesState(input = "search test", isSearch = true, title = ""),
+            0,
+            false,
+            {},
+            {},
+            {})
     }
 
 }
@@ -342,11 +377,11 @@ fun SuggestionsToolbarPreview() {
             DishesToolbar(
                 "",
                 DishesState(
-                    title="",
+                    title = "",
                     input = "search test",
                     isSearch = true,
                     suggestions = mapOf("test" to 4, "search" to 2),
-                ), 0, {}, {})
+                ), 0, false, {}, {}, {})
         }
 
     }

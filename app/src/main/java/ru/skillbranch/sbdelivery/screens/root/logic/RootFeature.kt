@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.skillbranch.sbdelivery.domain.User
 import ru.skillbranch.sbdelivery.screens.cart.logic.CartFeature
 import ru.skillbranch.sbdelivery.screens.cart.logic.reduce
 import ru.skillbranch.sbdelivery.screens.dish.logic.DishFeature
@@ -122,7 +123,9 @@ data class RootState(
     val screens: Map<String, ScreenState>,
     val currentRoute: String,
     val backstack: List<ScreenState> = emptyList(),
-    val cartCount: Int = 0
+    val cartCount: Int = 0,
+    val notificationCount: Int = 0,
+    val user: User? = null
 ) : Serializable {
     val current: ScreenState =
         checkNotNull(screens[currentRoute], { "check route $currentRoute or scrrens $screens" })
