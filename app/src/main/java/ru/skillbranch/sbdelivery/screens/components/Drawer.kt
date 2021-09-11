@@ -34,6 +34,7 @@ val menuItems = listOf(
     MenuItem(R.drawable.ic_user, "Профиль", "profile"),
     MenuItem(R.drawable.ic_orders, "Заказы", "order"),
     MenuItem(R.drawable.ic_notification, "Уведомления", "notifications"),
+    MenuItem(R.drawable.ic_about, "О приложении", "about"),
 )
 
 @Composable
@@ -43,6 +44,7 @@ fun NavigationDrawer(
     user: User? = User("Сидоров Иван", "sidorov.ivan@mail.ru"),
     notificationCount: Int = 0,
     cartCount: Int = 0,
+    onLogout: () -> Unit,
     onSelect: (String) -> Unit
 ) {
     Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
@@ -70,13 +72,14 @@ fun NavigationDrawer(
                     Text(text = it.email, style = MaterialTheme.typography.body1)
                 }
 
-                IconButton(onClick = { /*TODO*/ },
+                IconButton(onClick = onLogout,
                     modifier= Modifier.offset(x = (-12).dp, y = (-12).dp)
                 ) {
                     Icon(
                         tint = MaterialTheme.colors.onBackground,
                         painter = painterResource(id = R.drawable.ic_baseline_exit_to_app_24),
-                        contentDescription = "exit"
+                        contentDescription = "Logout"
+//                        contentDescription = "exit"
                     )
                 }
             }
@@ -155,7 +158,7 @@ fun NavigationDrawer(
 @Composable
 fun DrawerPreview() {
     AppTheme {
-        NavigationDrawer("home", notificationCount = 7, cartCount = 8) {
+        NavigationDrawer("home", notificationCount = 7, cartCount = 8, onLogout = {} ) {
 
         }
     }

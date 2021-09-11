@@ -59,6 +59,8 @@ fun RootScreen(vm: RootViewModel) {
                 currentRoute = state.currentRoute,
                 cartCount = state.cartCount,
                 notificationCount = state.notificationCount,
+                onLogout = { //TODO: empty handler
+                            }
 //                user = state.user,
             ) { route ->
                 if(state.currentRoute == route) return@NavigationDrawer
