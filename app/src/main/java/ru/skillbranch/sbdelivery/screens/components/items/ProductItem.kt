@@ -97,7 +97,7 @@ fun ProductItem(
                 Icon(
                     tint = if (dish.isFavorite) MaterialTheme.colors.secondaryVariant else MaterialTheme.colors.onPrimary,
                     painter = painterResource(id = R.drawable.ic_favorite),
-                    contentDescription = "is favorite"
+                    contentDescription = "Toggle favorite"
                 )
             }
 
@@ -139,7 +139,7 @@ fun ProductItem(
                     }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add_product),
-                    contentDescription = "add product",
+                    contentDescription = "Add to cart",
                     tint = MaterialTheme.colors.onSecondary
                 )
             }
