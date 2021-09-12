@@ -102,7 +102,7 @@ fun ProductItem(
             }
 
             Text(
-                text = "${dish.price} руб.",
+                text = "${dish.price} руб",
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.secondary,
                 modifier = Modifier.constrainAs(price) {
