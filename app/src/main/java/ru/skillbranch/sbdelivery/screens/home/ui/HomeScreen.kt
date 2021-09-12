@@ -39,7 +39,7 @@ fun HomeScreen(state: HomeFeature.State, accept: (Msg) -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.wallpaper),
                 contentScale = ContentScale.Crop,
-                contentDescription = null
+                contentDescription = "Wallpaper"
             )
         }
 
