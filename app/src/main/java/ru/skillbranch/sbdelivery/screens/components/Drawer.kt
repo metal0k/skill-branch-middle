@@ -34,7 +34,6 @@ val menuItems = listOf(
     MenuItem(R.drawable.ic_user, "Профиль", "profile"),
     MenuItem(R.drawable.ic_orders, "Заказы", "order"),
     MenuItem(R.drawable.ic_notification, "Уведомления", "notifications"),
-    MenuItem(R.drawable.ic_about, "О приложении", "about"),
 )
 
 @Composable
@@ -136,6 +135,7 @@ fun NavigationDrawer(
             modifier = Modifier
                 .height(44.dp)
                 .fillMaxWidth()
+                .clickable { onSelect("about") }
         ) {
             Spacer(modifier = Modifier.width(20.dp))
             Icon(
