@@ -30,7 +30,7 @@ fun AboutDialog(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = "О Программе")
+                Text(text = "О приложении SBDelivery")
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = onDismiss,
