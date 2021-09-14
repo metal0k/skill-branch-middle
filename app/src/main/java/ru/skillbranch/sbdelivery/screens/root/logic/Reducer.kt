@@ -76,6 +76,15 @@ fun RootState.reduceNavigate(
                         copy(state = FavoriteFeature.initialState())
                     }
                 }
+
+                "about" -> {
+                    newState.changeCurrentScreen<ScreenState.About> {
+                        copy(state=Unit)
+                    }
+
+                }
+
+
                 else -> throw IllegalStateException("not found navigation for route ${msg.route}")
             }
 

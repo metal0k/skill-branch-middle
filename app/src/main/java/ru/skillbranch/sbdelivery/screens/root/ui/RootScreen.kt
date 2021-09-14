@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.skillbranch.sbdelivery.screens.cart.ui.CartScreen
+import ru.skillbranch.sbdelivery.screens.components.AboutDialog
 import ru.skillbranch.sbdelivery.screens.components.DefaultToolbar
 import ru.skillbranch.sbdelivery.screens.components.DishesToolbar
 import ru.skillbranch.sbdelivery.screens.components.NavigationDrawer
@@ -186,6 +187,10 @@ fun ContentHost(vm: RootViewModel) {
                 currentScreen.state,
                 vm::accept
             )
+
+            is ScreenState.About -> AboutDialog() {
+                vm.navigate(NavCmd.Back)
+            }
         }
     }
 }

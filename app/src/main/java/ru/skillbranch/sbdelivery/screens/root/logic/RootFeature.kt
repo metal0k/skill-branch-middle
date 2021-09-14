@@ -35,6 +35,7 @@ class RootFeature(private val initState: RootState? = null) {
             DishFeature.route to ScreenState.Dish(),
             CartFeature.route to ScreenState.Cart(),
             MenuFeature.route to ScreenState.Menu(),
+            "about" to ScreenState.About(Unit)
         ),
         currentRoute = HomeFeature.route
     )
@@ -141,7 +142,7 @@ data class RootState(
 }
 
 sealed class ScreenState(
-    val route: String,
+    public val route: String,
     val title: String
 ) : Serializable {
     abstract fun initialEffects(): Set<Eff>
@@ -194,6 +195,13 @@ sealed class ScreenState(
             .initialEffects()
             .mapTo(HashSet(), Eff::Favorite)
     }
+
+    data class About(
+        val state: Unit
+    ): ScreenState("about", "О программе")
+    {
+        override fun initialEffects(): Set<Eff> = setOf(Eff.About(Unit))
+    }
 }
 
 sealed class Eff {
@@ -220,6 +228,7 @@ sealed class Eff {
     data class Home(val eff: HomeFeature.Eff) : Eff()
     data class Menu(val eff: MenuFeature.Eff) : Eff()
     data class Favorite(val eff: FavoriteFeature.Eff) : Eff()
+    data class About(val eff: Unit) : Eff()
 
     //Navigate
     data class Nav(val cmd: NavCmd) : Eff()
