@@ -36,7 +36,7 @@ fun AboutDialog(
                     onClick = onDismiss,
                     content = {
                         Icon(
-                            tint = MaterialTheme.colors.onPrimary,
+                            tint = MaterialTheme.colors.secondary,
                             painter = painterResource(R.drawable.ic_baseline_close_24),
                             contentDescription = "Close"
                         )
@@ -50,7 +50,7 @@ fun AboutDialog(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Ok", color = MaterialTheme.colors.secondary)
+                    Text("Ок", color = MaterialTheme.colors.secondary)
                 }
             }
         }
